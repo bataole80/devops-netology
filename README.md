@@ -3,12 +3,12 @@
 ## Задание №1 - Подготовка рабочей среды
 
 ### Ссылки
-Убедитесь, что работает подсветка синтаксиса, файлы должны выглядеть вот так
-    ![Терраформ](img/tf.jpg)
-    ![bahs](img/bash.png)
-    ![markdown](img/markdown.png)
-    ![Yaml](img/yaml.png)
-    ![Jsonnet](img/jsonnet.png)
+Мои скриншоты
+    - Terraform: ![Terraform](img/tf.jpg)
+    - Bash: ![bash](img/bash.jpg)
+    - Markdown: ![markdown](img/markdown.jpg)
+    - Yaml: ![Yaml](img/yaml.jpg)
+    - Jsonnet: ![Jsonnet](img/jsonnet.jpg)
 
 ## Задание №2
 
