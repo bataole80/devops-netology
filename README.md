@@ -4,7 +4,7 @@
 
 ### Ссылки
 
-    - Terraform: ![Терраформ](img/terraform.jpeg)
+    - Terraform: ![Терраформ](img/tf.jpeg)
     - Bash: ![bahs](img/bash.jpeg)
     - Markdown: ![markdown](img/markdown.jpeg)
     - Yaml: ![Yaml](img/yaml.jpeg)
