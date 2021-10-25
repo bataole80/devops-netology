@@ -4,11 +4,11 @@
 
 ### Ссылки
 
-    - Terraform: ![Терраформ](tf.jpeg)
-    - Bash: ![bahs](img/bash.jpeg)
-    - Markdown: ![markdown](img/markdown.jpeg)
+    - Terraform: ![Терраформ](img/tf.jpeg)
+    - Bash: ![bahs](img/bash.jpg)
+    - Markdown: ![markdown](img/markdown.jpg)
     - Yaml: ![Yaml](img/yaml.jpeg)
-    - Jsonnet: ![Jsonnet](img/jsonnet.jpeg)
+    - Jsonnet: ![Jsonnet](img/jsonnet.jpg)
 
 
 ## Задание №2
