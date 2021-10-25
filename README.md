@@ -7,7 +7,7 @@
     - Terraform: ![Terraform](img/tf.jpg)
     - Bash: ![bash](img/bash.jpg)
     - Markdown: ![markdown](img/md.jpg)
-    - Yaml: ![Yaml](img/yaml.jpg)
+    - Yaml: ![Yaml](img/yaml.jpeg)
     - Jsonnet: ![Jsonnet](img/jsonnet.jpg)
 
 ## Задание №2
