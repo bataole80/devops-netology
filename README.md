@@ -3,13 +3,11 @@
 ## Задание №1 - Подготовка рабочей среды
 
 ### Ссылки
-
-    - Terraform: ![Терраформ](img/tf.jpeg)
-    - Bash: ![bahs](img/bash.jpg)
-    - Markdown: ![markdown](img/markdown.jpg)
-    - Yaml: ![Yaml](img/yaml.jpeg)
-    - Jsonnet: ![Jsonnet](img/jsonnet.jpg)
-
+    - Terraform: ![Терраформ](img/tf.jpg)
+    - Bash: ![bahs](img/bash.png)
+    - Markdown: ![markdown](img/markdown.png)
+    - Yaml: ![Yaml](img/yaml.png)
+    - Jsonnet: ![Jsonnet](img/jsonnet.png)
 
 ## Задание №2
 
