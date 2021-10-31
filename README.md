@@ -1,6 +1,7 @@
 # netology-devops
 
-v0.0 tag creation
+v0.1 annotated tag creation
+v0.0 tag creation   .
 
 Редакция файла для второго домашнего задания «2.1. Системы контроля версий.»
 
