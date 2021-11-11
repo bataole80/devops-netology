@@ -45,6 +45,7 @@ v.cpus = 2
 The question is actually not clearly defined - did you mean the command or the history file? Anyway, these are the two variables from man
 
 HISTSIZE, line 630-632
+
 HISTFILESIZE, line 621-624
 
 ignoreboth -->
@@ -86,12 +87,13 @@ Not sure if I understood the question.  It is too generic a question.
 
 10 . С учётом ответа на предыдущий вопрос, как создать однократным вызовом touch 100000 файлов? Получится ли аналогичным образом создать 300000? Если нет, то почему?
 
-vagrant@vagrant:~/files$ touch {1..100000}.txt
-vagrant@vagrant:~/files$ ls -1 | wc -l
-100000
+      vagrant@vagrant:~/files$ touch {1..100000}.txt
 
-vagrant@vagrant:~/files$ touch {1..300000}.txt
--bash: /usr/bin/touch: Argument list too long
+      vagrant@vagrant:~/files$ ls -1 | wc -l
+      100000
+
+      vagrant@vagrant:~/files$ touch {1..300000}.txt
+      -bash: /usr/bin/touch: Argument list too long
 
 The reason is that the number of files to be expanded as arguments is larger than the arguments buffer space, 
 managed by the ARG_MAX argument. This limit for the length of a command is imposed by the operating system.
@@ -106,16 +108,16 @@ The conditional expression will return true if the file /tmp exists and is a dir
       bash is /usr/local/bin/bash
       bash is /bin/bash
 
-vagrant@vagrant:~/files$ mkdir /tmp/new_path_directory/
-vagrant@vagrant:~/files$ touch /tmp/new_path_directory/bash
-vagrant@vagrant:~/files$ PATH=/tmp/new_path_directory:$PATH
-vagrant@vagrant:~/files$ echo $PATH
-/tmp/new_path_directory:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
-vagrant@vagrant:~/files$ chmod u+x /tmp/new_path_directory/bash
-vagrant@vagrant:~/files$ type -a bash
-bash is /tmp/new_path_directory/bash
-bash is /usr/bin/bash
-bash is /bin/bash
+      vagrant@vagrant:~/files$ mkdir /tmp/new_path_directory/
+      vagrant@vagrant:~/files$ touch /tmp/new_path_directory/bash
+      vagrant@vagrant:~/files$ PATH=/tmp/new_path_directory:$PATH
+      vagrant@vagrant:~/files$ echo $PATH
+      /tmp/new_path_directory:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
+      vagrant@vagrant:~/files$ chmod u+x /tmp/new_path_directory/bash
+      vagrant@vagrant:~/files$ type -a bash
+      bash is /tmp/new_path_directory/bash
+      bash is /usr/bin/bash
+      bash is /bin/bash
 
 13 . Чем отличается планирование команд с помощью batch и at?
 
@@ -124,7 +126,7 @@ bash is /bin/bash
 
 14 . Завершите работу виртуальной машины чтобы не расходовать ресурсы компьютера и/или батарею ноутбука.
 
-vagrant halt
+      vagrant halt
 
 
     
