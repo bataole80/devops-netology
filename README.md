@@ -1,139 +1,81 @@
-Домашнее задание к занятию "3.1. Работа в терминале, лекция 1"
+Домашнее задание к занятию "3.2. Работа в терминале, лекция 2"
 
-1 . Установите средство виртуализации Oracle VirtualBox
+1 . Какого типа команда cd? Попробуйте объяснить, почему она именно такого типа; опишите ход своих мыслей, если считаете что она могла бы быть другого типа.
 
-![OracleVM](OracleVM.jpg)
+cd это внутренняя, встроенная по отношению к командной оболочке команда (built-in). Она меняет текущую папку только для оболочки, в которой выполняется. 
+В man данная команда описана как утилита. 
 
-2 . Установите средство автоматизации Hashicorp Vagrant
+Комметарий к вопросу: вопрос не очень понятен. Пожайлуста, поясняйте его суть, потому что без контекста сам вопрос не очень понятен. Пришлось догадываться, о чем вопрос.
 
-![Vagrant](Vagrant.jpg)
+2 . Какая альтернатива без pipe команде grep <some_string> <some_file> | wc -l? man grep поможет в ответе на этот вопрос. Ознакомьтесь с документом о других подобных некорректных вариантах использования pipe.
 
-3 . В вашем основном окружении подготовьте удобный для дальнейшей работы терминал.
+grep -c <some_string> <some_file>
 
-![Windows Terminal](WTerminal.jpg)
+3 . Какой процесс с PID 1 является родителем для всех процессов в вашей виртуальной машине Ubuntu 20.04?
 
-4 . С помощью базового файла конфигурации запустите Ubuntu 20.04 в VirtualBox посредством Vagrant
+/sbin/init
 
-![vm](vm.jpg)
+4 . Как будет выглядеть команда, которая перенаправит вывод stderr ls на другую сессию терминала?
 
-5 . Ознакомьтесь с графическим интерфейсом VirtualBox, посмотрите как выглядит виртуальная машина, 
-которую создал для вас Vagrant, какие аппаратные ресурсы ей выделены. Какие ресурсы выделены по-умолчанию?
+Как пример, ls 2>/dev/pts/1
 
-![vm1](vm1.jpg)
+5 . Получится ли одновременно передать команде файл на stdin и вывести ее stdout в другой файл? Приведите работающий пример.
 
-1024 MB of base memory, 2 CPUs, 4 MB of video memory, 1 monitor with a VboxVGA graphics controller, 
-64 GB of virtual disk space
+grep '1 2 3' < file > file1
 
-6 . Ознакомьтесь с возможностями конфигурации VirtualBox через Vagrantfile: документация. Как добавить оперативной памяти или ресурсов процессора виртуальной машине?
+6 . Получится ли находясь в графическом режиме, вывести данные из PTY в какой-либо из эмуляторов TTY? Сможете ли вы наблюдать выводимые данные?
 
-Using two parameters - v.memory and v.cpus like in the example in the documentation:
+Получится. Пример: date 1>/dev/tty1
+Смог наблюдать выводимые данные.
 
-config.vm.provider "virtualbox" do |v|  
-v.memory = 1024  
-v.cpus = 2
- end
- 
-7 . Команда vagrant ssh из директории, в которой содержится Vagrantfile, позволит вам оказаться внутри виртуальной машины без каких-либо дополнительных настроек. Попрактикуйтесь в выполнении обсуждаемых команд в терминале Ubuntu.
- 
- ![7](7.jpg)
- 
-8 . Ознакомиться с разделами man bash, почитать о настройках самого bash:
+7 . Выполните команду bash 5>&1. К чему она приведет? Что будет, если вы выполните echo netology > /proc/$$/fd/5? Почему так происходит?
 
-- какой переменной можно задать длину журнала history, и на какой строчке manual это описывается?
-- что делает директива ignoreboth в bash?
+Выполнение команды bash 5>&1 не приводит к результату на экране. Выполнение самой команды bash 5 приводит к ошибке, 
+но мы ее (STDERR) не выводим в STDOUT.
 
-The question is actually not clearly defined - did you mean the command or the history file? Anyway, these are the two variables from man
+8 . Получится ли в качестве входного потока для pipe использовать только stderr команды, не потеряв при этом отображение stdout на pty? Напоминаем: по умолчанию через pipe передается только stdout команды слева от | на stdin команды справа. Это можно сделать, поменяв стандартные потоки местами через промежуточный новый дескриптор, который вы научились создавать в предыдущем вопросе.
 
-HISTSIZE, line 630-632
+ls 2>&1 | cat -
 
-HISTFILESIZE, line 621-624
+9 . Что выведет команда cat /proc/$$/environ? Как еще можно получить аналогичный по содержанию вывод?
 
-ignoreboth -->
-HISTCONTROL
-A  colon-separated list of values controlling how commands are saved on the history list.  **If the list of 
-values includes ignorespace, lines which begin with a space character are not saved in the history list.  
-A value of ignoredups causes lines matching the previous history entry to not be saved.  
-A value of ignoreboth is shorthand for ignorespace and ignoredups.** 
+Команда выводит изначальное окружение при выполнении прораммы/процесса. Такой вывод выдают команды env,printenv.
 
-In short, ignoreboth does not save both duplicates and lines beginning with a space character.
+10 . Используя man, опишите что доступно по адресам /proc/<PID>/cmdline, /proc/<PID>/exe
 
-9 . В каких сценариях использования применимы скобки {} и на какой строчке man bash это описано?
+/proc/[pid]/cmdline содержит полную строку команды, если только это не зомби процесс. Данный файл содержит аргументы команды как набор строк, разделенных так называемыми нулевыми байтами.
+('\0').
 
-{ list; }
-list  is  simply executed in the current shell environment.  list must be terminated with a newline or 
-semicolon.  This is known as a group command.  The return status is the exit status of list.  Note that 
-unlike the metacharacters ( and ), { and } are reserved words and must occur where a reserved word 
-is permitted to be recognized.  Since they do not  cause  a  word  break, they must be separated 
-from list by whitespace or another shell metacharacter.
-lines 206-210
+/proc/[pid]/exe - данный файл это указатель на имя директории исполняемой команды. Его stat выглядит как symlink.
 
-name () compound-command [redirection]
-function name [()] compound-command [redirection]
-This  defines a function named name.  The reserved word function is optional.  If the function reserved word 
-is supplied, the parentheses are optional.  The body of the function is the compound command 
-compound-command (see Compound Commands above).  That command is usually a list of commands between { and }, 
-but may be any command listed under Compound Commands above,  with one  exception: If the function 
-reserved word is used, but the parentheses are not supplied, the braces are required.
-lines 307-311
+11 . Узнайте, какую наиболее старшую версию набора инструкций SSE поддерживает ваш процессор с помощью /proc/cpuinfo.
 
-BASH_LINENO
-An  array  variable  whose  members  are  the line numbers in source files where each corresponding 
-member of FUNCNAME was invoked.  ${BASH_LINENO[$i]} is the line number in the source file
-(${BASH_SOURCE[$i+1]}) where ${FUNCNAME[$i]} was called (or ${BASH_LINENO[$i-1]} if referenced within 
-another shell function).  Use LINENO to obtain the current line number.
-lines 470-472
+sse, sse2, sse4a
 
-Not sure if I understood the question.  It is too generic a question.
+12 . При открытии нового окна терминала и vagrant ssh создается новая сессия и выделяется pty. Это можно подтвердить командой tty, которая упоминалась в лекции 3.2. Однако:
 
-10 . С учётом ответа на предыдущий вопрос, как создать однократным вызовом touch 100000 файлов? Получится ли аналогичным образом создать 300000? Если нет, то почему?
+vagrant@netology1:~$ ssh localhost 'tty'
 
-      vagrant@vagrant:~/files$ touch {1..100000}.txt
+not a tty
 
-      vagrant@vagrant:~/files$ ls -1 | wc -l
-      100000
+Почитайте, почему так происходит, и как изменить поведение.
 
-      vagrant@vagrant:~/files$ touch {1..300000}.txt
-      -bash: /usr/bin/touch: Argument list too long
+Насколько я понимаю, при выполнении ssh нет локального tty. 
+Чтобы изменить поведение, нужно добавить флаг -t. Документации на сей счет немного, если у вас есть поподробнее, буду благодарен за ссылку. На сайте Vagrant я не нашел описания такой ситуации.
 
-The reason is that the number of files to be expanded as arguments is larger than the arguments buffer space, 
-managed by the ARG_MAX argument. This limit for the length of a command is imposed by the operating system.
-
-11 . В man bash поищите по /\[\[. Что делает конструкция [[ -d /tmp ]]
-
-The conditional expression will return true if the file /tmp exists and is a directory, otherwise it will return false.
-
-12 . Основываясь на знаниях о просмотре текущих (например, PATH) и установке новых переменных; командах, которые мы рассматривали, добейтесь в выводе type -a bash в виртуальной машине наличия первым пунктом в списке:
-      
-      bash is /tmp/new_path_directory/bash
-      bash is /usr/local/bin/bash
-      bash is /bin/bash
-
-      vagrant@vagrant:~/files$ mkdir /tmp/new_path_directory/
-      vagrant@vagrant:~/files$ touch /tmp/new_path_directory/bash
-      vagrant@vagrant:~/files$ PATH=/tmp/new_path_directory:$PATH
-      vagrant@vagrant:~/files$ echo $PATH
-      /tmp/new_path_directory:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin
-      vagrant@vagrant:~/files$ chmod u+x /tmp/new_path_directory/bash
-      vagrant@vagrant:~/files$ type -a bash
-      bash is /tmp/new_path_directory/bash
-      bash is /usr/bin/bash
-      bash is /bin/bash
-
-13 . Чем отличается планирование команд с помощью batch и at?
-
- at      executes commands **at a specified time**.
- batch   executes commands **when system load levels permit**; in other words, when the load average drops below 1.5, or the value specified in the invocation of atd.
-
-14 . Завершите работу виртуальной машины чтобы не расходовать ресурсы компьютера и/или батарею ноутбука.
-
-      vagrant halt
+      ssh -t localhost 'tty'
 
 
-    
+13 . Бывает, что есть необходимость переместить запущенный процесс из одной сессии в другую. Попробуйте сделать это, воспользовавшись reptyr. Например, так можно перенести в screen процесс, который вы запустили по ошибке в обычной SSH-сессии.
 
+![reptyr1](reptyr1.jpg)
+![reptyr2](reptyr2.jpg)
 
+Скриншоты с reptyr показаны. Комментарий - крайне неудачно выбрана утилита. Она работает только под пользователем root и имеет баги. 
 
+14 . sudo echo string > /root/new_file не даст выполнить перенаправление под обычным пользователем, так как перенаправлением занимается процесс shell'а, который запущен без sudo под вашим пользователем. Для решения данной проблемы можно использовать конструкцию echo string | sudo tee /root/new_file. Узнайте что делает команда tee и почему в отличие от sudo echo команда с sudo tee будет работать.
 
+Команда tee читает стандартный ввод и пишет в стандартный вывод и файлы. Команда sudo echo string > /root/new_file не сработает, потому что перенаправление в файл в ней выполняется командной оболочкой обычного, непривилегированного пользователя. В случае с echo string | sudo tee /root/new_file это делает сама команда, запущенная с sudo.
 
 
 
