@@ -20,7 +20,7 @@
     User=vagrant
     Type=idle
     EnvironmentFile=-/home/vagrant/node_exporter/node_exporter.env
-    ExecStart=/home/vagrant/node_exporter/node_exporter-1.3.0.linux-amd64/node_exporter
+    ExecStart=/home/vagrant/node_exporter/node_exporter-1.3.0.linux-amd64/node_exporter --collector.${collector}
     Restart=on-failure
 
     [Install]
