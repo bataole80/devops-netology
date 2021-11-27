@@ -1,153 +1,173 @@
-1 . 
+Домашнее задание к занятию "3.5. Файловые системы"
 
-На лекции мы познакомились с node_exporter. В демонстрации его исполняемый файл запускался в background. Этого достаточно для демо, но не для настоящей production-системы, где процессы должны находиться под внешним управлением. Используя знания из лекции по systemd, создайте самостоятельно простой unit-файл для node_exporter:
-- поместите его в автозагрузку,    
-- предусмотрите возможность добавления опций к запускаемому процессу через внешний файл (посмотрите, например, на systemctl cat cron),
-- удостоверьтесь, что с помощью systemctl процесс корректно стартует, завершается, а после перезагрузки автоматически поднимается.
+1 . Узнайте о sparse (разряженных) файлах.
 
-Содержание Unit-файла
+Разрежённый файл (англ. sparse file) — файл, в котором последовательности нулевых байтов[1] заменены на информацию об этих последовательностях (список дыр).
+Преимущества:
 
-    vagrant@vagrant:~/node_exporter$ systemctl cat node_exporter
-    # Warning: node_exporter.service changed on disk, the version systemd has loaded is outdated.
-    # This output shows the current version of the unit's original fragment and drop-in files.
-    # If fragments or drop-ins were added or removed, they are not properly reflected in this output.
-    # Run 'systemctl daemon-reload' to reload units.
-    # /lib/systemd/system/node_exporter.service
-    [Unit]
-    Description=node_exporter service
+- экономия дискового пространства. Использование разрежённых файлов считается одним из способов сжатия данных на уровне файловой системы;
+- отсутствие временных затрат на запись нулевых байт;
+    увеличение срока службы запоминающих устройств.
 
-    [Service]
-    User=vagrant
-    Type=idle
-    EnvironmentFile=-/home/vagrant/node_exporter/node_exporter.env
-    ExecStart=/home/vagrant/node_exporter/node_exporter-1.3.0.linux-amd64/node_exporter --collector.${collector}
-    Restart=on-failure
+Недостатки:
 
-    [Install]
-    WantedBy=multi-user.target
+- накладные расходы на работу со списком дыр;
+- фрагментация файла при частой записи данных в дыры;
+- невозможность записи данных в дыры при отсутствии свободного места на диске;
+- невозможность использования других индикаторов дыр, кроме нулевых байт.
+
+Разрежённые файлы используются для хранения контейнеров, например:
+
+- образов дисков виртуальных машин;
+- резервных копий дисков и/или разделов, созданных спец. ПО.
     
-    sudo chmod 644 /lib/systemd/system/node_exporter.service
+Создание разрежённого файла размером 200 Гб:
 
-Добавление в автозагрузку Linux
-
-    sudo systemctl daemon-reload
-    sudo systemctl enable node_exporter.service
-    vagrant@vagrant:~/node_exporter$ systemctl list-unit-files | grep enabled | grep node_exporter
-    node_exporter.service                  enabled         enabled
+    dd if=/dev/zero of=./sparse-file bs=1 count=0 seek=200G
     
-    vagrant@vagrant:~/node_exporter$ sudo systemctl start node_exporter
-    vagrant@vagrant:~/node_exporter$ pgrep node_exporter
-    1571
-    vagrant@vagrant:~/node_exporter$ sudo systemctl stop node_exporter
-    vagrant@vagrant:~/node_exporter$ pgrep node_exporter
-    vagrant@vagrant:~/node_exporter$
     
-После перезагрузки машины:
+2 . Могут ли файлы, являющиеся жесткой ссылкой на один объект, иметь разные права доступа и владельца? Почему?
 
-    vagrant@vagrant:~$ uptime
-    20:29:46 up 2 min,  1 user,  load average: 0.03, 0.03, 0.00
-    vagrant@vagrant:~$ ps -eaf | grep node_exporter
-    vagrant      609       1  0 20:27 ?        00:00:00 /home/vagrant/node_exporter/node_exporter-1.3.0.linux-amd64/node_exporter
-    vagrant      889     786  0 20:29 pts/0    00:00:00 grep --color=auto node_exporter
+Нет. Жесткие ссылки указывает на тот же inode, а эта информация содержится в inode. Права доступа и владелец одни и те же. Жесткие ссылки создаются, когда пользователь уже является владелбцем файла.
+Но есть одно - насколько я понимаю, можно модифицировать следующий параметр - /proc/sys/fs/protected_hardlinks для обхода этого правила. Но это означает потенциальные проблемы с безопасностью.
+Так лучше не делать.
+
+3 . Сделайте vagrant destroy на имеющийся инстанс Ubuntu. Замените содержимое Vagrantfile следующим.
+Данная конфигурация создаст новую виртуальную машину с двумя дополнительными неразмеченными дисками по 2.5 Гб.
+
+    PS C:\Users\Oleg\Documents\TRAINING\DEVOPS\NETOLOGY\vagrantfiles> vagrant up
+    Bringing machine 'default' up with 'virtualbox' provider...
+    ==> default: Importing base box 'bento/ubuntu-20.04'...
+    ==> default: Matching MAC address for NAT networking...
+    ==> default: Checking if box 'bento/ubuntu-20.04' version '202107.28.0' is up to date...
+    ==> default: Setting the name of the VM: vagrantfiles_default_1637874796842_16910
+    ==> default: Clearing any previously set network interfaces...
+    ==> default: Preparing network interfaces based on configuration...
+        default: Adapter 1: nat
+    ==> default: Forwarding ports...
+        default: 22 (guest) => 2222 (host) (adapter 1)
+    ==> default: Running 'pre-boot' VM customizations...
+    ==> default: Booting VM...
+    ==> default: Waiting for machine to boot. This may take a few minutes...
+        default: SSH address: 127.0.0.1:2222
+        default: SSH username: vagrant
+        default: SSH auth method: private key
+        default:
+        default: Vagrant insecure key detected. Vagrant will automatically replace
+        default: this with a newly generated keypair for better security.
+        default:
+        default: Inserting generated public key within guest...
+        default: Removing insecure key from the guest if it's present...
+        default: Key inserted! Disconnecting and reconnecting using new SSH key...
+    ==> default: Machine booted and ready!
+    ==> default: Checking for guest additions in VM...
+    ==> default: Mounting shared folders...
+        default: /vagrant => C:/Users/Oleg/Documents/TRAINING/DEVOPS/NETOLOGY/vagrantfiles
+        
+4 . Используя fdisk, разбейте первый диск на 2 раздела: 2 Гб, оставшееся пространство.
+
+    Command (m for help): p
+    Disk /dev/sdb: 2.51 GiB, 2684354560 bytes, 5242880 sectors
+    Disk model: VBOX HARDDISK
+    Units: sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 512 bytes
+    I/O size (minimum/optimal): 512 bytes / 512 bytes
+    Disklabel type: dos
+    Disk identifier: 0x0466959d
     
-2 . Ознакомьтесь с опциями node_exporter и выводом /metrics по-умолчанию. Приведите несколько опций, которые вы бы выбрали для базового мониторинга хоста по CPU, памяти, диску и сети.
-
-    curl http://localhost:9100/metrics
+    Device     Boot   Start     End Sectors  Size Id Type
+    /dev/sdb1          2048 4196351 4194304    2G 83 Linux
+    /dev/sdb2       4196352 5242879 1046528  511M 83 Linux
     
-    node_cpu_seconds_total{cpu="0",mode="idle"} 1438.62
-    node_cpu_seconds_total{cpu="0",mode="iowait"} 0.61
-    node_cpu_seconds_total{cpu="0",mode="irq"} 0
-    node_cpu_seconds_total{cpu="0",mode="nice"} 0
-    node_cpu_seconds_total{cpu="0",mode="softirq"} 0.03
-    node_cpu_seconds_total{cpu="0",mode="steal"} 0
-    node_cpu_seconds_total{cpu="0",mode="system"} 3.61
-    node_cpu_seconds_total{cpu="0",mode="user"} 1.73
+    Command (m for help):
     
-    node_memory_Percpu_bytes 1.06496e+06
+5 . Используя sfdisk, перенесите данную таблицу разделов на второй диск.
+
+    vagrant@vagrant:~$ sudo sfdisk -d /dev/sdb > partitions
+    vagrant@vagrant:~$ less partitions
+    vagrant@vagrant:~$ sudo sfdisk /dev/sdc < partitions
+    Checking that no-one is using this disk right now ... OK
     
-    node_memory_Shmem_bytes 667648
-    node_memory_SwapFree_bytes 1.027600384e+09
+    Disk /dev/sdc: 2.51 GiB, 2684354560 bytes, 5242880 sectors
+    Disk model: VBOX HARDDISK
+    Units: sectors of 1 * 512 = 512 bytes
+    Sector size (logical/physical): 512 bytes / 512 bytes
+    I/O size (minimum/optimal): 512 bytes / 512 bytes
     
-    node_disk_read_time_seconds_total{device="dm-0"} 11.504
-    node_disk_write_time_seconds_total{device="dm-0"} 0.804
+    >>> Script header accepted.
+    >>> Script header accepted.
+    >>> Script header accepted.
+    >>> Script header accepted.
+    >>> Created a new DOS disklabel with disk identifier 0x0466959d.
+    /dev/sdc1: Created a new partition 1 of type 'Linux' and of size 2 GiB.
+    /dev/sdc2: Created a new partition 2 of type 'Linux' and of size 511 MiB.
+    /dev/sdc3: Done.
     
-    node_netstat_Tcp_ActiveOpens 4
-    node_netstat_Tcp_InErrs 0
-    node_netstat_Udp_InDatagrams 0
+    New situation:
+    Disklabel type: dos
+    Disk identifier: 0x0466959d
     
-3 . Установите в свою виртуальную машину Netdata. Воспользуйтесь готовыми пакетами для установки (sudo apt install -y netdata). После успешной установки:
-в конфигурационном файле /etc/netdata/netdata.conf в секции [web] замените значение с localhost на bind to = 0.0.0.0,
-    добавьте в Vagrantfile проброс порта Netdata на свой локальный компьютер и сделайте vagrant reload:
-
-    config.vm.network "forwarded_port", guest: 19999, host: 19999
-
-После успешной перезагрузки в браузере на своем ПК (не в виртуальной машине) вы должны суметь зайти на localhost:19999. Ознакомьтесь с метриками, которые по умолчанию собираются Netdata и с комментариями, которые даны к этим метрикам.
-
-![netdata](netdata.jpg)
-![vagrantnetdata](vagrantnetdata.jpg)
-
-4 . Можно ли по выводу dmesg понять, осознает ли ОС, что загружена не на настоящем оборудовании, а на системе виртуализации?
-
-Можно.
-
-    [    0.000000] Hypervisor detected: KVM
-    [    0.000000] DMI: innotek GmbH VirtualBox/VirtualBox, BIOS VirtualBox 12/01/2006
-    [    0.003716] CPU MTRRs all blank - virtualized system.
-    [    0.080117] Booting paravirtualized kernel on KVM
-    [    0.220552] Performance Events: PMU not available due to virtualization, using software events only.
-    [    2.432049] systemd[1]: Detected virtualization oracle.
-
-5 . Как настроен sysctl fs.nr_open на системе по-умолчанию? Узнайте, что означает этот параметр. Какой другой существующий лимит не позволит достичь такого числа (ulimit --help)?
-
-    vagrant@vagrant:~$ sysctl fs.nr_open
-    fs.nr_open = 1048576
+    Device     Boot   Start     End Sectors  Size Id Type
+    /dev/sdc1          2048 4196351 4194304    2G 83 Linux
+    /dev/sdc2       4196352 5242879 1046528  511M 83 Linux
     
-Параметр означает максимальное количество открытых файлов.
-
-    vagrant@vagrant:~$ ulimit -n
-    1024
+    The partition table has been altered.
+    Calling ioctl() to re-read partition table.
+    Syncing disks.
     
-Лимит на количство открытых файловых дескрипторов.
-
-6 . Запустите любой долгоживущий процесс (не ls, который отработает мгновенно, а, например, sleep 1h) в отдельном неймспейсе процессов; покажите, что ваш процесс работает под PID 1 через nsenter. Для простоты работайте в данном задании под root (sudo -i). Под обычным пользователем требуются дополнительные опции (--map-root-user) и т.д.
+    vagrant@vagrant:~$ lsblk -f
+    NAME                 FSTYPE      LABEL UUID                                   FSAVAIL FSUSE% MOUNTPOINT
+    sda
+    ├─sda1               vfat              7D3B-6BE4                                 511M     0% /boot/efi
+    ├─sda2
+    └─sda5               LVM2_member       Mx3LcA-uMnN-h9yB-gC2w-qm7w-skx0-OsTz9z
+      ├─vgvagrant-root   ext4              b527b79c-7f45-4e2b-a90f-1a4e9cb477c2     56.7G     2% /
+      └─vgvagrant-swap_1 swap              fad91b1f-6eed-4e4b-8dbf-913ba5bcacc7                  [SWAP]
+    sdb
+    ├─sdb1
+    └─sdb2
+    sdc
+    ├─sdc1
+    └─sdc2
     
-    vagrant@vagrant:~$ sudo -i
-    root@vagrant:~# nsenter --target 1672 --pid --mount
-    root@vagrant:/# ps aux
-    USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
-    root           1  0.0  0.0   8076   580 pts/1    S+   21:10   0:00 sleep 1h
-    root           2  0.0  0.4   9836  4040 pts/2    S    21:12   0:00 -bash
-    root          11  0.0  0.3  11492  3396 pts/2    R+   21:12   0:00 ps aux
     
-7 . Найдите информацию о том, что такое :(){ :|:& };:. Запустите эту команду в своей виртуальной машине Vagrant с Ubuntu 20.04 (это важно, поведение в других ОС не проверялось). Некоторое время все будет "плохо", после чего (минуты) – ОС должна стабилизироваться. Вызов dmesg расскажет, какой механизм помог автоматической стабилизации. Как настроен этот механизм по-умолчанию, и как изменить число процессов, которое можно создать в сессии?
+6 . Соберите mdadm RAID1 на паре разделов 2 Гб.
 
-Функция с именем :, которая порождает саму себя, цепная реакция fork'ов
-
-    :()
-    {
-        :|:&
-    };
-    :
-
-    [ 4821.205874] cgroup: fork rejected by pids controller in /user.slice/user-1000.slice/session-4.scope
-
-Механизм process number controller помог стабилизировать машину. 
-    root@vagrant:~# ulimit -u
-    3571
+    vagrant@vagrant:~$ sudo mdadm --create --verbose /dev/md0 --level=mirror --raid-devices=2 /dev/sdb1 /dev/sdc1
+    mdadm: Note: this array has metadata at the start and
+        may not be suitable as a boot device.  If you plan to
+        store '/boot' on this device please ensure that
+        your boot-loader understands md/v1.x metadata, or use
+        --metadata=0.90
+    mdadm: size set to 2094080K
+    Continue creating array? yes
+    mdadm: Defaulting to version 1.2 metadata
+    mdadm: array /dev/md0 started.
+    vagrant@vagrant:~$ cat /proc/mdstat
+    Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10]
+    md0 : active raid1 sdc1[1] sdb1[0]
+          2094080 blocks super 1.2 [2/2] [UU]
     
-    root@vagrant:~# systemctl status user-1000.slice
-    ● user-1000.slice - User Slice of UID 1000
-         Loaded: loaded
-       Drop-In: /usr/lib/systemd/system/user-.slice.d
-                └─10-defaults.conf
-         Active: active since Mon 2021-11-22 19:17:58 UTC; 2h 26min ago
-          Docs: man:user@.service(5)
-          Tasks: 14 (limit: 2356)
-      
-    root@vagrant:/etc/systemd/system# cat /sys/fs/cgroup/pids/user.slice/user-1000.slice/pids.max
-    2356
+    unused devices: <none>
     
-Нужно поменять значение в этом файле.
+7 . Соберите mdadm RAID0 на второй паре маленьких разделов.
 
-
-
+    vagrant@vagrant:~$ sudo mdadm --create --verbose /dev/md1 --level=stripe --raid-devices=2 /dev/sdb2 /dev/sdc2
+    mdadm: chunk size defaults to 512K
+    mdadm: Defaulting to version 1.2 metadata
+    mdadm: array /dev/md1 started.
+    vagrant@vagrant:~$
+    vagrant@vagrant:~$
+    vagrant@vagrant:~$
+    vagrant@vagrant:~$ cat /proc/mdstat
+    Personalities : [linear] [multipath] [raid0] [raid1] [raid6] [raid5] [raid4] [raid10]
+    md1 : active raid0 sdc2[1] sdb2[0]
+          1042432 blocks super 1.2 512k chunks
+    
+    md0 : active raid1 sdc1[1] sdb1[0]
+          2094080 blocks super 1.2 [2/2] [UU]
+    
+    unused devices: <none>
+    vagrant@vagrant:~$
+    
+8 . 
