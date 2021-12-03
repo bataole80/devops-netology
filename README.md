@@ -1,230 +1,149 @@
-Домашнее задание к занятию "3.6. Компьютерные сети, лекция 1"
+Домашнее задание к занятию "3.7. Компьютерные сети, лекция 2"
 
-1 . Работа c HTTP через телнет.
+1 . Проверьте список доступных сетевых интерфейсов на вашем компьютере. Какие команды есть для этого в Linux и в Windows?
 
-Подключитесь утилитой телнет к сайту stackoverflow.com telnet stackoverflow.com 80
-отправьте HTTP запрос
+Linux
 
-    GET /questions HTTP/1.0
-    HOST: stackoverflow.com
-    [press enter]
-    [press enter]
+    vagrant@vagrant:~$ ip -br l
+    lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP>
+    eth0             UP             08:00:27:73:60:cf <BROADCAST,MULTICAST,UP,LOWER_UP>
 
-    В ответе укажите полученный HTTP код, что он означает?
+Windows
 
-    HTTP/1.1 301 Moved Permanently
+    PS C:\Users\Oleg Lon> ipconfig /all
 
-Код состояния HTTP 301 — стандартный код ответа HTTP, получаемый в ответ от сервера в ситуации, когда запрошенный ресурс был на постоянной основе перемещён в новое месторасположение, и указывающий на то, что текущие ссылки, использующие данный URL, должны быть обновлены. 
+    Windows IP Configuration
+    ....
+   
+    Ethernet adapter Ethernet:
 
-2 . Повторите задание 1 в браузере, используя консоль разработчика F12.
+       Media State . . . . . . . . . . . : Media disconnected
+       Connection-specific DNS Suffix  . :
+       Description . . . . . . . . . . . : Realtek PCIe FE Family Controller
+       Physical Address. . . . . . . . . : DC-4A-3E-E7-A4-EA
+       DHCP Enabled. . . . . . . . . . . : Yes
+       Autoconfiguration Enabled . . . . : Yes
 
-    откройте вкладку Network
-    отправьте запрос http://stackoverflow.com
-    найдите первый ответ HTTP сервера, откройте вкладку Headers
-    укажите в ответе полученный HTTP код.
-    проверьте время загрузки страницы, какой запрос обрабатывался дольше всего?
-    приложите скриншот консоли браузера в ответ.
+    Ethernet adapter VirtualBox Host-Only Network:
 
-![browser2](browser2.jpg)
+       Connection-specific DNS Suffix  . :
+       Description . . . . . . . . . . . : VirtualBox Host-Only Ethernet Adapter
+       Physical Address. . . . . . . . . : 0A-00-27-00-00-12
+       DHCP Enabled. . . . . . . . . . . : No
+       Autoconfiguration Enabled . . . . : Yes
+       Link-local IPv6 Address . . . . . : fe80::a47f:684:49d0:8c60%18(Preferred)
+       IPv4 Address. . . . . . . . . . . : 192.168.56.1(Preferred)
+       Subnet Mask . . . . . . . . . . . : 255.255.255.0
+       Default Gateway . . . . . . . . . :
+       DHCPv6 IAID . . . . . . . . . . . : 738852903
+       DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-1D-FD-4F-D2-DC-4A-3E-E7-A4-EA
+       DNS Servers . . . . . . . . . . . : fec0:0:0:ffff::1%1
+                                           fec0:0:0:ffff::2%1
+                                           fec0:0:0:ffff::3%1
+    NetBIOS over Tcpip. . . . . . . . : Enabled
 
-Код 200 OK
+    Wireless LAN adapter Local Area Connection* 1:
 
-![browser2.1](browser2.1.jpg)
+       Media State . . . . . . . . . . . : Media disconnected
+       Connection-specific DNS Suffix  . :
+       Description . . . . . . . . . . . : Microsoft Wi-Fi Direct Virtual Adapter
+       Physical Address. . . . . . . . . : E0-94-67-C9-25-03
+       DHCP Enabled. . . . . . . . . . . : Yes
+       Autoconfiguration Enabled . . . . : Yes
+    ....
+    Wireless LAN adapter WiFi:
 
-Данный GET запрос в списке, судя по timings консоли, выполнялся дольше всего.
+       Connection-specific DNS Suffix  . :
+       Description . . . . . . . . . . . : Intel(R) Dual Band Wireless-AC 3165
+       Physical Address. . . . . . . . . : E0-94-67-C9-25-02
+       DHCP Enabled. . . . . . . . . . . : Yes
+       Autoconfiguration Enabled . . . . : Yes
+       Link-local IPv6 Address . . . . . : fe80::f474:e689:391b:9bb%20(Preferred)
+       IPv4 Address. . . . . . . . . . . : 192.168.0.17(Preferred)
+       Subnet Mask . . . . . . . . . . . : 255.255.255.0
+       Lease Obtained. . . . . . . . . . : 3 декабря 2021 г. 19:01:56
+       Lease Expires . . . . . . . . . . : 4 декабря 2021 г. 19:06:56
+       Default Gateway . . . . . . . . . : 192.168.0.1
+       DHCP Server . . . . . . . . . . . : 192.168.0.1
+       DHCPv6 IAID . . . . . . . . . . . : 65049703
+       DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-1D-FD-4F-D2-DC-4A-3E-E7-A4-EA
+       DNS Servers . . . . . . . . . . . : 192.168.0.1
+       NetBIOS over Tcpip. . . . . . . . : Enabled
 
-3 . Какой IP адрес у вас в интернете?
+2 . Какой протокол используется для распознавания соседа по сетевому интерфейсу? Какой пакет и команды есть в Linux для этого?
 
-![browser3](browser3.jpg)   
+Протокол LLDP канального уровня. 
+Пакеты lldpd, snmpd.
 
-4 . Какому провайдеру принадлежит ваш IP адрес? Какой автономной системе AS? Воспользуйтесь утилитой whois
+    root@vagrant:~# lldpd -d
+    2021-12-03T18:19:46 [INFO/main] protocol LLDP enabled
+    2021-12-03T18:19:46 [INFO/main] protocol CDPv1 disabled
+    2021-12-03T18:19:46 [INFO/main] protocol CDPv2 disabled
+    2021-12-03T18:19:46 [INFO/main] protocol SONMP disabled
+    2021-12-03T18:19:46 [INFO/main] protocol EDP disabled
+    2021-12-03T18:19:46 [INFO/main] protocol FDP disabled
+    2021-12-03T18:19:46 [INFO/event] libevent 2.1.11-stable initialized with epoll method
+    2021-12-03T18:19:46 [INFO/lldpctl] lldpd should resume operations
 
-    vagrant@vagrant:~$ whois 89.109.51.112
-    % This is the RIPE Database query service.
-    % The objects are in RPSL format.
-    %
-    % The RIPE Database is subject to Terms and Conditions.
-    % See http://www.ripe.net/db/support/db-terms-conditions.pdf
+    root@vagrant:~# sudo service lldpd restart
+    root@vagrant:~# lldpctl
+    -------------------------------------------------------------------------------
+    LLDP neighbors:
+    -------------------------------------------------------------------------------
+ 
+    root@vagrant:~# lldpcli
+    [lldpcli] # show neighbors
+    -------------------------------------------------------------------------------
+    LLDP neighbors:
+    -------------------------------------------------------------------------------
+    [lldpcli] # show interfaces
+    -------------------------------------------------------------------------------
+    LLDP interfaces:
+    -------------------------------------------------------------------------------
+    Interface:    eth0, via: unknown, Time: 0 day, 00:03:26
+      Chassis:
+        ChassisID:    mac 08:00:27:73:60:cf
+        SysName:      vagrant.vm
+        SysDescr:     Ubuntu 20.04.2 LTS Linux 5.4.0-80-generic #90-Ubuntu SMP Fri Jul 9 22:49:44 UTC 2021 x86_64
+        MgmtIP:       10.0.2.15
+        MgmtIP:       fe80::a00:27ff:fe73:60cf
+        Capability:   Bridge, off
+        Capability:   Router, off
+        Capability:   Wlan, off
+        Capability:   Station, on
+      Port:
+        PortID:       mac 08:00:27:73:60:cf
+        PortDescr:    eth0
+      TTL:          120
+    -------------------------------------------------------------------------------
 
-    % Note: this output has been filtered.
-    %       To receive output for a database update, use the "-B" flag.
+Уважаемые методисты курса, не совсем понятно задание про команды и использование инструмента lldpd.
+Помнится, мы устанавливали машину с помощью vagrant. Инструмент lldpd, насколько я понял, не покажет
+соседей при использовании NAT подключения. А vagrant его использует по умолчанию.
+Вот выдержка из документации: Vagrant assumes there is an available NAT device on eth0. This ensures that Vagrant always has a way of communicating with the guest machine. It is possible to change this manually (outside of Vagrant), however, this may lead to inconsistent behavior. Providers might have additional assumptions. For example, in VirtualBox, this assumption means that network adapter 1 is a NAT device.
+Мне кажется, что при такой ситуации автор задания должен помочь студентам настроить среду должным образом.
 
-    % Information related to '89.109.44.0 - 89.109.51.255'
+3 . Какая технология используется для разделения L2 коммутатора на несколько виртуальных сетей? Какой пакет и команды есть в Linux для этого? Приведите пример конфига.
 
-    % Abuse contact for '89.109.44.0 - 89.109.51.255' is 'abuse@rt.ru'
+Технология VLAN. Пакет vlan в Linux. 
 
-    inetnum:        89.109.44.0 - 89.109.51.255
-    netname:        PPPoE-PG-NAT-POOL4
-    descr:          Network for PPPoE clients terminations in
-    descr:          N.Novgorod city
-    country:        RU
-    admin-c:        VT-RU
-    tech-c:         VT-RU
-    status:         ASSIGNED PA
-    mnt-by:         MNT-VOLGATELECOM
-    created:        2021-05-13T10:00:08Z
-    last-modified:  2021-05-13T10:00:08Z
-    source:         RIPE
+Команды (опробованы из документации)
+    vagrant@vagrant:~$ sudo modprobe 8021q
+    vagrant@vagrant:~$ sudo ip link add link eth0 name eth0.10 type vlan id 10
+    vagrant@vagrant:~$ sudo ip addr add 10.0.0.1/24 dev eth0.10
+    vagrant@vagrant:~$ sudo ip link set up eth0.10
+    
+    vagrant@vagrant:~$ ip link
+    1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+        link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+        link/ether 08:00:27:73:60:cf brd ff:ff:ff:ff:ff:ff
+    3: eth0.10@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
+        link/ether 08:00:27:73:60:cf brd ff:ff:ff:ff:ff:ff
 
-    role:           OJSC Rostelecom, Nizhny Novgorod
-
-IP адрес принадлежит Ростелеком.
-
-
-% Information related to '89.109.48.0/22AS12389'
-
-route:          89.109.48.0/22
-descr:          Rostelecom networks
-origin:         AS12389
-mnt-by:         MNT-VOLGATELECOM
-created:        2021-05-13T10:07:44Z
-last-modified:  2021-05-13T10:07:44Z
-source:         RIPE
-
-AS номер AS12389.
-
-5 . Через какие сети проходит пакет, отправленный с вашего компьютера на адрес 8.8.8.8? Через какие AS? Воспользуйтесь утилитой traceroute
-
-    PS C:\Users\Oleg Lon> tracert 8.8.8.8
-
-    Tracing route to dns.google [8.8.8.8]
-    over a maximum of 30 hops:
-
-      1     1 ms     1 ms     1 ms  rt [192.168.0.1]
-      2     5 ms     2 ms     4 ms  188.254.2.28
-      3     2 ms     2 ms     5 ms  188.254.2.29
-      4     2 ms     2 ms     2 ms  109.172.24.143
-      5     *        *        *     Request timed out.
-      6     *        *        *     Request timed out.
-      7    11 ms    18 ms    12 ms  108.170.250.130
-      8    30 ms     *        *     209.85.255.136
-      9    26 ms    26 ms    29 ms  72.14.238.168
-     10    27 ms    26 ms    26 ms  172.253.51.245
-     11     *        *        *     Request timed out.
-     12     *        *        *     Request timed out.
-     13     *        *        *     Request timed out.
-     14     *        *        *     Request timed out.
-     15     *        *        *     Request timed out.
-     16     *        *        *     Request timed out.
-     17     *        *        *     Request timed out.
-     18     *        *        *     Request timed out.
-     19     *        *        *     Request timed out.
-     20     *        *        *     Request timed out.
-     21    32 ms    26 ms     *     dns.google [8.8.8.8]
-     22    37 ms    33 ms    26 ms  dns.google [8.8.8.8]
-
-    Trace complete.
-
-Пакет проходит через сети:
-- представленные адресами 188.254.2.28, 188.254.2.29: 188.254.0.0/17 AS12389
-- 109.172.24.143: 109.172.24.0/24 AS12389
-- 108.170.250.130: AS15169
-- 209.85.255.136: whois не определил AS, организация Google
-- 72.14.238.168: whois не определил AS, организация Google
-- 172.253.51.245: 172.253.0.0/16 AS15169
-
-6 . Повторите задание 5 в утилите mtr. На каком участке наибольшая задержка - delay?
-
-    vagrant@vagrant:~$ mtr -bzr 8.8.8.8 > MtrReport
-    vagrant@vagrant:~$ less MtrReport
-
-    Start: 2021-12-02T13:29:36+0000
-    HOST: vagrant                     Loss%   Snt   Last   Avg  Best  Wrst StDev
-      1 . AS???    _gateway (10.0.2.2)  0.0%    10    0.5   2.3   0.5  16.6   5.0
-      2 . AS???    rt (192.168.0.1)     0.0%    10    3.0   4.6   2.9  13.3   3.1
-      3 . AS12389  188.254.2.28         0.0%    10   31.9  19.1   4.8  88.4  26.2
-      4 . AS12389  188.254.2.29        30.0%    10    3.8   5.0   3.8  10.8   2.6
-      5 . AS12389  109.172.24.143       0.0%    10    5.3   5.1   3.4   7.1   1.3
-      6 . AS???    ???                 100.0    10    0.0   0.0   0.0   0.0   0.0
-      7 . AS???    ???                 100.0    10    0.0   0.0   0.0   0.0   0.0
-      8 . AS15169  108.170.250.130      0.0%    10   14.6  15.1  13.9  18.6   1.5
-      9 . AS15169  209.85.255.136      60.0%    10   31.6  31.8  31.3  32.9   0.8
-     10 . AS15169  72.14.238.168        0.0%    10   28.7  36.1  27.9  91.6  19.8
-     11 . AS15169  172.253.51.245       0.0%    10   29.4  29.4  27.9  32.4   1.3
-     12 . AS???    ???                 100.0    10    0.0   0.0   0.0   0.0   0.0
-     13 . AS???    ???                 100.0    10    0.0   0.0   0.0   0.0   0.0
-     14 . AS???    ???                 100.0    10    0.0   0.0   0.0   0.0   0.0
-     15 . AS???    ???                 100.0    10    0.0   0.0   0.0   0.0   0.0
-     16 . AS???    ???                 100.0    10    0.0   0.0   0.0   0.0   0.0
-     17 . AS???    ???                 100.0    10    0.0   0.0   0.0   0.0   0.0
-     18 . AS???    ???                 100.0    10    0.0   0.0   0.0   0.0   0.0
-     19 . AS???    ???                 100.0    10    0.0   0.0   0.0   0.0   0.0
-     20 . AS???    ???                 100.0    10    0.0   0.0   0.0   0.0   0.0
-     21 . AS15169  dns.google (8.8.8.8 90.0%    10   28.3  28.3  28.3  28.3   0.0
-
-Наибольшая задержка на участке AS15169.
-
-7 . Какие DNS сервера отвечают за доменное имя dns.google? Какие A записи? воспользуйтесь утилитой dig
-
-    vagrant@vagrant:~$ dig dns.google
-
-    ; <<>> DiG 9.16.1-Ubuntu <<>> dns.google
-    ;; global options: +cmd
-    ;; Got answer:
-    ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 4996
-    ;; flags: qr rd ra; QUERY: 1, ANSWER: 2, AUTHORITY: 0, ADDITIONAL: 1
-
-    ;; OPT PSEUDOSECTION:
-    ; EDNS: version: 0, flags:; udp: 65494
-    ;; QUESTION SECTION:
-    ;dns.google.                    IN      A
-
-    ;; ANSWER SECTION:
-    dns.google.             518     IN      A       8.8.8.8
-    dns.google.             518     IN      A       8.8.4.4
-
-    ;; Query time: 12 msec
-    ;; SERVER: 127.0.0.53#53(127.0.0.53)
-    ;; WHEN: Thu Dec 02 13:39:48 UTC 2021
-    ;; MSG SIZE  rcvd: 71
-
-8 . Проверьте PTR записи для IP адресов из задания 7. Какое доменное имя привязано к IP? воспользуйтесь утилитой dig
-
-    vagrant@vagrant:~$ dig -x 8.8.8.8
-
-    ; <<>> DiG 9.16.1-Ubuntu <<>> -x 8.8.8.8
-    ;; global options: +cmd
-    ;; Got answer:
-    ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 55852
-    ;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
-
-    ;; OPT PSEUDOSECTION:
-    ; EDNS: version: 0, flags:; udp: 65494
-    ;; QUESTION SECTION:
-    ;8.8.8.8.in-addr.arpa.          IN      PTR
-
-    ;; ANSWER SECTION:
-    8.8.8.8.in-addr.arpa.   1568    IN      PTR     dns.google.
-
-    ;; Query time: 0 msec
-    ;; SERVER: 127.0.0.53#53(127.0.0.53)
-    ;; WHEN: Thu Dec 02 13:46:25 UTC 2021
-    ;; MSG SIZE  rcvd: 73
-
-    vagrant@vagrant:~$ dig -x 8.8.4.4
-
-    ; <<>> DiG 9.16.1-Ubuntu <<>> -x 8.8.4.4
-    ;; global options: +cmd
-    ;; Got answer:
-    ;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 18533
-    ;; flags: qr rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
-
-    ;; OPT PSEUDOSECTION:
-    ; EDNS: version: 0, flags:; udp: 65494
-    ;; QUESTION SECTION:
-    ;4.4.8.8.in-addr.arpa.          IN      PTR
-
-    ;; ANSWER SECTION:
-    4.4.8.8.in-addr.arpa.   2164    IN      PTR     dns.google.
-
-    ;; Query time: 12 msec
-    ;; SERVER: 127.0.0.53#53(127.0.0.53)
-    ;; WHEN: Thu Dec 02 13:46:35 UTC 2021
-    ;; MSG SIZE  rcvd: 73
-
-8.8.8.8 --> dns.google.
-8.8.4.4 --> dns.google.
+4 . Какие типы агрегации интерфейсов есть в Linux? Какие опции есть для балансировки нагрузки? Приведите пример конфига.
 
 
 
 
+    
