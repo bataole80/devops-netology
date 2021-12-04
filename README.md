@@ -128,6 +128,7 @@ Windows
 Технология VLAN. Пакет vlan в Linux. 
 
 Команды (опробованы из документации)
+    
     vagrant@vagrant:~$ sudo modprobe 8021q
     vagrant@vagrant:~$ sudo ip link add link eth0 name eth0.10 type vlan id 10
     vagrant@vagrant:~$ sudo ip addr add 10.0.0.1/24 dev eth0.10
