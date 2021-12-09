@@ -125,48 +125,70 @@ Windows
 
 Пометка для доработки:
 Задание 2
-Всё верно. Только “соседи” в данном случае - это аналогичные виртуальные машины, запущенные как гости, а не машины в локальной сети хоста.
+Вам же прямо пишет, что не удается создать сокет:
+2021-12-08T15:36:18 [INFO/main] unable to create control socket because it already exists
+2021-12-08T15:36:18 [INFO/main] check if another instance is running
 
-Ответ: К сожалению, запуск двух виртуальных машин проблему не решил. Соседи не выводятся.
-Я использовал следующую конфигурацию:
+Ван нужно либо правильно настроить сеть: www.vagrantup.com...te_network
+Либо, как вариант, запустить саму две убунту как ВМ (например, VirtualBox), но для этого всё равно нужно настроить внутреннюю сеть.
 
-    Vagrant.configure("2") do |config|
-    config.vm.define "master" do |subconfig|
-    subconfig.vm.box = "bento/ubuntu-20.04"
-    end
+С уважением,
+Алексей
 
-    config.vm.define "node1" do |subconfig|
-     subconfig.vm.box = "bento/ubuntu-20.04"
-    end
+Ответ:
+Как я и предполагал ранее, настройка сети помогла решить и получить ответ по LLDP nrighbours:
 
-    end
-
-Вот такой вывод:
-    
-    root@vagrant:/home/vagrant# sudo lldpd -dddd -D interfaces
-    2021-12-08T15:36:18 [INFO/main] unable to create control socket because it already exists
-    2021-12-08T15:36:18 [INFO/main] check if another instance is running
-    2021-12-08T15:36:18 [WARN/main] another instance is running, please stop it
-    2021-12-08T15:36:18 [CRIT/main] giving up
-
-Возможно, что-то нужно менять в сетевых настройках?
-
-    root@vagrant:/home/vagrant# lldpcli show statistics
+    vagrant@vagrant:~$ lldpctl
     -------------------------------------------------------------------------------
-    LLDP statistics:
+    LLDP neighbors:
     -------------------------------------------------------------------------------
-    Interface:    eth0
-      Transmitted:  90
-      Received:     0
-      Discarded:    0
-      Unrecognized: 0
-      Ageout:       0
-      Inserted:     0
-      Deleted:      0
+    Interface:    eth1, via: LLDP, RID: 1, Time: 0 day, 00:01:08
+      Chassis:
+      ChassisID:    mac 08:00:27:73:60:cf
+    SysName:      vagrant.vm
+    SysDescr:     Ubuntu 20.04.2 LTS Linux 5.4.0-80-generic #90-Ubuntu SMP Fri Jul 9 22:49:44 UTC 2021 x86_64
+    MgmtIP:       10.0.2.15
+    MgmtIP:       fe80::a00:27ff:fe73:60cf
+    Capability:   Bridge, off
+    Capability:   Router, off
+    Capability:   Wlan, off
+    Capability:   Station, on
+      Port:
+    PortID:       mac 08:00:27:f6:aa:d1
+    PortDescr:    eth1
+    TTL:          120
+    PMD autoneg:  supported: yes, enabled: yes
+      Adv:          10Base-T, HD: yes, FD: yes
+      Adv:          100Base-TX, HD: yes, FD: yes
+      Adv:          1000Base-T, HD: no, FD: yes
+      MAU oper type: 1000BaseTFD - Four-pair Category 5 UTP, full duplex mode
     -------------------------------------------------------------------------------
 
-Я попробовал, у меня не получается. Буду благодарен, если дадите полезную ссылку на подробное описание для таких случаев, если оно сущкствует.
-
+    vagrant@vagrant:~$ lldpctl
+    -------------------------------------------------------------------------------
+    LLDP neighbors:
+    -------------------------------------------------------------------------------
+    Interface:    eth1, via: LLDP, RID: 1, Time: 0 day, 00:01:03
+    Chassis:
+    ChassisID:    mac 08:00:27:73:60:cf
+    SysName:      vagrant.vm
+    SysDescr:     Ubuntu 20.04.2 LTS Linux 5.4.0-80-generic #90-Ubuntu SMP Fri Jul 9 22:49:44 UTC 2021 x86_64
+    MgmtIP:       10.0.2.15
+    MgmtIP:       fe80::a00:27ff:fe73:60cf
+    Capability:   Bridge, off
+    Capability:   Router, off
+    Capability:   Wlan, off
+    Capability:   Station, on
+      Port:
+    PortID:       mac 08:00:27:ed:f7:b7
+    PortDescr:    eth1
+    TTL:          120
+    PMD autoneg:  supported: yes, enabled: yes
+      Adv:          10Base-T, HD: yes, FD: yes
+      Adv:          100Base-TX, HD: yes, FD: yes
+      Adv:          1000Base-T, HD: no, FD: yes
+      MAU oper type: 1000BaseTFD - Four-pair Category 5 UTP, full duplex mode
+    -------------------------------------------------------------------------------
 
 3 . Какая технология используется для разделения L2 коммутатора на несколько виртуальных сетей? Какой пакет и команды есть в Linux для этого? Приведите пример конфига.
 
