@@ -1,327 +1,292 @@
-Домашнее задание к занятию "3.7. Компьютерные сети, лекция 2"
+1 . 
+    Подключитесь к публичному маршрутизатору в интернет. Найдите маршрут к вашему публичному IP
 
-1 . Проверьте список доступных сетевых интерфейсов на вашем компьютере. Какие команды есть для этого в Linux и в Windows?
-
-Linux
-
-    vagrant@vagrant:~$ ip -br l
-    lo               UNKNOWN        00:00:00:00:00:00 <LOOPBACK,UP,LOWER_UP>
-    eth0             UP             08:00:27:73:60:cf <BROADCAST,MULTICAST,UP,LOWER_UP>
-
-Windows
-
-    PS C:\Users\Oleg Lon> ipconfig /all
-
-    Windows IP Configuration
-    ....
-   
-    Ethernet adapter Ethernet:
-
-       Media State . . . . . . . . . . . : Media disconnected
-       Connection-specific DNS Suffix  . :
-       Description . . . . . . . . . . . : Realtek PCIe FE Family Controller
-       Physical Address. . . . . . . . . : DC-4A-3E-E7-A4-EA
-       DHCP Enabled. . . . . . . . . . . : Yes
-       Autoconfiguration Enabled . . . . : Yes
-
-    Ethernet adapter VirtualBox Host-Only Network:
-
-       Connection-specific DNS Suffix  . :
-       Description . . . . . . . . . . . : VirtualBox Host-Only Ethernet Adapter
-       Physical Address. . . . . . . . . : 0A-00-27-00-00-12
-       DHCP Enabled. . . . . . . . . . . : No
-       Autoconfiguration Enabled . . . . : Yes
-       Link-local IPv6 Address . . . . . : fe80::a47f:684:49d0:8c60%18(Preferred)
-       IPv4 Address. . . . . . . . . . . : 192.168.56.1(Preferred)
-       Subnet Mask . . . . . . . . . . . : 255.255.255.0
-       Default Gateway . . . . . . . . . :
-       DHCPv6 IAID . . . . . . . . . . . : 738852903
-       DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-1D-FD-4F-D2-DC-4A-3E-E7-A4-EA
-       DNS Servers . . . . . . . . . . . : fec0:0:0:ffff::1%1
-                                           fec0:0:0:ffff::2%1
-                                           fec0:0:0:ffff::3%1
-    NetBIOS over Tcpip. . . . . . . . : Enabled
-
-    Wireless LAN adapter Local Area Connection* 1:
-
-       Media State . . . . . . . . . . . : Media disconnected
-       Connection-specific DNS Suffix  . :
-       Description . . . . . . . . . . . : Microsoft Wi-Fi Direct Virtual Adapter
-       Physical Address. . . . . . . . . : E0-94-67-C9-25-03
-       DHCP Enabled. . . . . . . . . . . : Yes
-       Autoconfiguration Enabled . . . . : Yes
-    ....
-    Wireless LAN adapter WiFi:
-
-       Connection-specific DNS Suffix  . :
-       Description . . . . . . . . . . . : Intel(R) Dual Band Wireless-AC 3165
-       Physical Address. . . . . . . . . : E0-94-67-C9-25-02
-       DHCP Enabled. . . . . . . . . . . : Yes
-       Autoconfiguration Enabled . . . . : Yes
-       Link-local IPv6 Address . . . . . : fe80::f474:e689:391b:9bb%20(Preferred)
-       IPv4 Address. . . . . . . . . . . : 192.168.0.17(Preferred)
-       Subnet Mask . . . . . . . . . . . : 255.255.255.0
-       Lease Obtained. . . . . . . . . . : 3 декабря 2021 г. 19:01:56
-       Lease Expires . . . . . . . . . . : 4 декабря 2021 г. 19:06:56
-       Default Gateway . . . . . . . . . : 192.168.0.1
-       DHCP Server . . . . . . . . . . . : 192.168.0.1
-       DHCPv6 IAID . . . . . . . . . . . : 65049703
-       DHCPv6 Client DUID. . . . . . . . : 00-01-00-01-1D-FD-4F-D2-DC-4A-3E-E7-A4-EA
-       DNS Servers . . . . . . . . . . . : 192.168.0.1
-       NetBIOS over Tcpip. . . . . . . . : Enabled
-
-2 . Какой протокол используется для распознавания соседа по сетевому интерфейсу? Какой пакет и команды есть в Linux для этого?
-
-Протокол LLDP канального уровня. 
-Пакеты lldpd, snmpd.
-
-    root@vagrant:~# lldpd -d
-    2021-12-03T18:19:46 [INFO/main] protocol LLDP enabled
-    2021-12-03T18:19:46 [INFO/main] protocol CDPv1 disabled
-    2021-12-03T18:19:46 [INFO/main] protocol CDPv2 disabled
-    2021-12-03T18:19:46 [INFO/main] protocol SONMP disabled
-    2021-12-03T18:19:46 [INFO/main] protocol EDP disabled
-    2021-12-03T18:19:46 [INFO/main] protocol FDP disabled
-    2021-12-03T18:19:46 [INFO/event] libevent 2.1.11-stable initialized with epoll method
-    2021-12-03T18:19:46 [INFO/lldpctl] lldpd should resume operations
-
-    root@vagrant:~# sudo service lldpd restart
-    root@vagrant:~# lldpctl
-    -------------------------------------------------------------------------------
-    LLDP neighbors:
-    -------------------------------------------------------------------------------
- 
-    root@vagrant:~# lldpcli
-    [lldpcli] # show neighbors
-    -------------------------------------------------------------------------------
-    LLDP neighbors:
-    -------------------------------------------------------------------------------
-    [lldpcli] # show interfaces
-    -------------------------------------------------------------------------------
-    LLDP interfaces:
-    -------------------------------------------------------------------------------
-    Interface:    eth0, via: unknown, Time: 0 day, 00:03:26
-      Chassis:
-        ChassisID:    mac 08:00:27:73:60:cf
-        SysName:      vagrant.vm
-        SysDescr:     Ubuntu 20.04.2 LTS Linux 5.4.0-80-generic #90-Ubuntu SMP Fri Jul 9 22:49:44 UTC 2021 x86_64
-        MgmtIP:       10.0.2.15
-        MgmtIP:       fe80::a00:27ff:fe73:60cf
-        Capability:   Bridge, off
-        Capability:   Router, off
-        Capability:   Wlan, off
-        Capability:   Station, on
-      Port:
-        PortID:       mac 08:00:27:73:60:cf
-        PortDescr:    eth0
-      TTL:          120
-    -------------------------------------------------------------------------------
-
-Уважаемые методисты курса, не совсем понятно задание про команды и использование инструмента lldpd.
-Помнится, мы устанавливали машину с помощью vagrant. Инструмент lldpd, насколько я понял, не покажет
-соседей при использовании NAT подключения. А vagrant его использует по умолчанию.
-Вот выдержка из документации: Vagrant assumes there is an available NAT device on eth0. This ensures that Vagrant always has a way of communicating with the guest machine. It is possible to change this manually (outside of Vagrant), however, this may lead to inconsistent behavior. Providers might have additional assumptions. For example, in VirtualBox, this assumption means that network adapter 1 is a NAT device.
-Мне кажется, что при такой ситуации автор задания должен помочь студентам настроить среду должным образом.
-
-Пометка для доработки:
-Задание 2
-Вам же прямо пишет, что не удается создать сокет:
-2021-12-08T15:36:18 [INFO/main] unable to create control socket because it already exists
-2021-12-08T15:36:18 [INFO/main] check if another instance is running
-
-Ван нужно либо правильно настроить сеть: www.vagrantup.com...te_network
-Либо, как вариант, запустить саму две убунту как ВМ (например, VirtualBox), но для этого всё равно нужно настроить внутреннюю сеть.
-
-С уважением,
-Алексей
+    telnet route-views.routeviews.org
+    Username: rviews
+    show ip route x.x.x.x/32
+    show bgp x.x.x.x/32
 
 Ответ:
-Как я и предполагал ранее, настройка сети помогла решить и получить ответ по LLDP neighbours:
 
-    vagrant@vagrant:~$ lldpctl
-    -------------------------------------------------------------------------------
-    LLDP neighbors:
-    -------------------------------------------------------------------------------
-    Interface:    eth1, via: LLDP, RID: 1, Time: 0 day, 00:01:08
-      Chassis:
-      ChassisID:    mac 08:00:27:73:60:cf
-    SysName:      vagrant.vm
-    SysDescr:     Ubuntu 20.04.2 LTS Linux 5.4.0-80-generic #90-Ubuntu SMP Fri Jul 9 22:49:44 UTC 2021 x86_64
-    MgmtIP:       10.0.2.15
-    MgmtIP:       fe80::a00:27ff:fe73:60cf
-    Capability:   Bridge, off
-    Capability:   Router, off
-    Capability:   Wlan, off
-    Capability:   Station, on
-      Port:
-    PortID:       mac 08:00:27:f6:aa:d1
-    PortDescr:    eth1
-    TTL:          120
-    PMD autoneg:  supported: yes, enabled: yes
-      Adv:          10Base-T, HD: yes, FD: yes
-      Adv:          100Base-TX, HD: yes, FD: yes
-      Adv:          1000Base-T, HD: no, FD: yes
-      MAU oper type: 1000BaseTFD - Four-pair Category 5 UTP, full duplex mode
-    -------------------------------------------------------------------------------
+    vagrant@vagrant:~$ telnet route-views.routeviews.org
+    Trying 128.223.51.103...
+    Connected to route-views.routeviews.org.
+    Escape character is '^]'.
+    C
+    **********************************************************************
 
-    vagrant@vagrant:~$ lldpctl
-    -------------------------------------------------------------------------------
-    LLDP neighbors:
-    -------------------------------------------------------------------------------
-    Interface:    eth1, via: LLDP, RID: 1, Time: 0 day, 00:01:03
-    Chassis:
-    ChassisID:    mac 08:00:27:73:60:cf
-    SysName:      vagrant.vm
-    SysDescr:     Ubuntu 20.04.2 LTS Linux 5.4.0-80-generic #90-Ubuntu SMP Fri Jul 9 22:49:44 UTC 2021 x86_64
-    MgmtIP:       10.0.2.15
-    MgmtIP:       fe80::a00:27ff:fe73:60cf
-    Capability:   Bridge, off
-    Capability:   Router, off
-    Capability:   Wlan, off
-    Capability:   Station, on
-      Port:
-    PortID:       mac 08:00:27:ed:f7:b7
-    PortDescr:    eth1
-    TTL:          120
-    PMD autoneg:  supported: yes, enabled: yes
-      Adv:          10Base-T, HD: yes, FD: yes
-      Adv:          100Base-TX, HD: yes, FD: yes
-      Adv:          1000Base-T, HD: no, FD: yes
-      MAU oper type: 1000BaseTFD - Four-pair Category 5 UTP, full duplex mode
-    -------------------------------------------------------------------------------
+                    RouteViews BGP Route Viewer
+                    route-views.routeviews.org
 
-3 . Какая технология используется для разделения L2 коммутатора на несколько виртуальных сетей? Какой пакет и команды есть в Linux для этого? Приведите пример конфига.
+     route views data is archived on http://archive.routeviews.org
 
-Технология VLAN. Пакет vlan в Linux. 
+     This hardware is part of a grant by the NSF.
+     Please contact help@routeviews.org if you have questions, or
+     if you wish to contribute your view.
 
-Команды (опробованы из документации)
+     This router has views of full routing tables from several ASes.
+     The list of peers is located at http://www.routeviews.org/peers
+     in route-views.oregon-ix.net.txt
+
+     NOTE: The hardware was upgraded in August 2014.  If you are seeing
+     the error message, "no default Kerberos realm", you may want to
+     in Mac OS X add "default unset autologin" to your ~/.telnetrc
+
+     To login, use the username "rviews".
+
+     **********************************************************************
+
+    User Access Verification
+
+    Username: rviews
+    route-views>
+
+    route-views>show ip route 109.184.55.145
+    Routing entry for 109.184.0.0/17
+      Known via "bgp 6447", distance 20, metric 0
+      Tag 6939, type external
+      Last update from 64.71.137.241 1w3d ago
+      Routing Descriptor Blocks:
+     * 64.71.137.241, from 64.71.137.241, 1w3d ago
+      Route metric is 0, traffic share count is 1
+      AS Hops 2
+      Route tag 6939
+      MPLS label: none
+    route-views>
+
+    route-views>show bgp 109.184.55.145
+    BGP routing table entry for 109.184.0.0/17, version 1388583535
+    Paths: (23 available, best #23, table default)
+    Not advertised to any peer
+    Refresh Epoch 1
+    2497 12389
+      202.232.0.2 from 202.232.0.2 (58.138.96.254)
+        Origin IGP, localpref 100, valid, external
+        path 7FE16938B8B0 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    20912 3257 3356 12389
+    212.66.96.126 from 212.66.96.126 (212.66.96.126)
+      Origin IGP, localpref 100, valid, external
+      Community: 3257:8070 3257:30515 3257:50001 3257:53900 3257:53902 20912:65004
+      path 7FE0AE715280 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    4901 6079 3356 12389
+    162.250.137.254 from 162.250.137.254 (162.250.137.254)
+      Origin IGP, localpref 100, valid, external
+      Community: 65000:10100 65000:10300 65000:10400
+      path 7FE0121167D0 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 3
+    3303 12389
+    217.192.89.50 from 217.192.89.50 (138.187.128.158)
+      Origin IGP, localpref 100, valid, external
+      Community: 3303:1004 3303:1006 3303:1030 3303:3056
+      path 7FE171248248 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    7660 2516 12389
+    203.181.248.168 from 203.181.248.168 (203.181.248.168)
+      Origin IGP, localpref 100, valid, external
+      Community: 2516:1050 7660:9001
+      path 7FE0F1974000 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    57866 3356 12389
+    37.139.139.17 from 37.139.139.17 (37.139.139.17)
+      Origin IGP, metric 0, localpref 100, valid, external
+      Community: 3356:2 3356:22 3356:100 3356:123 3356:501 3356:901 3356:2065
+      path 7FE11BF6AB70 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    7018 3356 12389
+    12.0.1.63 from 12.0.1.63 (12.0.1.63)
+      Origin IGP, localpref 100, valid, external
+      Community: 7018:5000 7018:37232
+      path 7FE08D2E6CA8 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    3333 1103 12389
+    193.0.0.56 from 193.0.0.56 (193.0.0.56)
+      Origin IGP, localpref 100, valid, external
+      path 7FE1319EBAB8 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    49788 12552 12389
+    91.218.184.60 from 91.218.184.60 (91.218.184.60)
+      Origin IGP, localpref 100, valid, external
+      Community: 12552:12000 12552:12100 12552:12101 12552:22000
+      Extended Community: 0x43:100:1
+      path 7FE136B730D8 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    8283 1299 12389
+    94.142.247.3 from 94.142.247.3 (94.142.247.3)
+      Origin IGP, metric 0, localpref 100, valid, external
+      Community: 1299:30000 8283:1 8283:101 8283:103
+      unknown transitive attribute: flag 0xE0 type 0x20 length 0x24
+        value 0000 205B 0000 0000 0000 0001 0000 205B
+              0000 0005 0000 0001 0000 205B 0000 0005
+              0000 0003
+      path 7FE1678D2D88 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    3356 12389
+    4.68.4.46 from 4.68.4.46 (4.69.184.201)
+      Origin IGP, metric 0, localpref 100, valid, external
+      Community: 3356:2 3356:22 3356:100 3356:123 3356:501 3356:901 3356:2065
+      path 7FE172483708 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    1221 4637 12389
+    203.62.252.83 from 203.62.252.83 (203.62.252.83)
+      Origin IGP, localpref 100, valid, external
+      path 7FE03908ABA0 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    852 3356 12389
+    154.11.12.212 from 154.11.12.212 (96.1.209.43)
+      Origin IGP, metric 0, localpref 100, valid, external
+      path 7FE038557FE0 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    20130 6939 12389
+    140.192.8.16 from 140.192.8.16 (140.192.8.16)
+      Origin IGP, localpref 100, valid, external
+      path 7FE0160E9DF0 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    701 1273 12389
+    137.39.3.55 from 137.39.3.55 (137.39.3.55)
+      Origin IGP, localpref 100, valid, external
+      path 7FE104D79FD0 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    3257 1299 12389
+    89.149.178.10 from 89.149.178.10 (213.200.83.26)
+      Origin IGP, metric 10, localpref 100, valid, external
+      Community: 3257:8794 3257:30052 3257:50001 3257:54900 3257:54901
+      path 7FE128C0A518 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    3549 3356 12389
+    208.51.134.254 from 208.51.134.254 (67.16.168.191)
+      Origin IGP, metric 0, localpref 100, valid, external
+      Community: 3356:2 3356:22 3356:100 3356:123 3356:501 3356:901 3356:2065 3549:2581 3549:30840
+      path 7FE0EF823D18 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    53767 14315 6453 6453 3356 12389
+    162.251.163.2 from 162.251.163.2 (162.251.162.3)
+      Origin IGP, localpref 100, valid, external
+      Community: 14315:5000 53767:5000
+      path 7FE02119BAE0 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    101 3356 12389
+    209.124.176.223 from 209.124.176.223 (209.124.176.223)
+      Origin IGP, localpref 100, valid, external
+      Community: 101:20100 101:20110 101:22100 3356:2 3356:22 3356:100 3356:123 3356:501 3356:901 3356:2065
+      Extended Community: RT:101:22100
+      path 7FE0E59DBCF8 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    19214 3257 3356 12389
+    208.74.64.40 from 208.74.64.40 (208.74.64.40)
+      Origin IGP, localpref 100, valid, external
+      Community: 3257:8108 3257:30048 3257:50002 3257:51200 3257:51203
+      path 7FE123526940 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    1351 6939 12389
+    132.198.255.253 from 132.198.255.253 (132.198.255.253)
+      Origin IGP, localpref 100, valid, external
+      path 7FE120EA9A58 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    3561 3910 3356 12389
+    206.24.210.80 from 206.24.210.80 (206.24.210.80)
+      Origin IGP, localpref 100, valid, external
+      path 7FE1260BE550 RPKI State valid
+      rx pathid: 0, tx pathid: 0
+    Refresh Epoch 1
+    6939 12389
+    64.71.137.241 from 64.71.137.241 (216.218.252.164)
+      Origin IGP, localpref 100, valid, external, best
+      path 7FE1260C4250 RPKI State valid
+      rx pathid: 0, tx pathid: 0x0
+    route-views>
+
+2 . Создайте dummy0 интерфейс в Ubuntu. Добавьте несколько статических маршрутов. Проверьте таблицу маршрутизации.
+
     
-    vagrant@vagrant:~$ sudo modprobe 8021q
-    vagrant@vagrant:~$ sudo ip link add link eth0 name eth0.10 type vlan id 10
-    vagrant@vagrant:~$ sudo ip addr add 10.0.0.1/24 dev eth0.10
-    vagrant@vagrant:~$ sudo ip link set up eth0.10
-    
-    vagrant@vagrant:~$ ip link
+Добавить в конфигурацию
+
+    root@vagrant:/home/vagrant# echo "dummy" >> /etc/modules
+    root@vagrant:/home/vagrant# echo "options dummy numdummies=2" > /etc/modprobe.d/dummy.conf
+    vagrant@vagrant:~$ cat /etc/network/interfaces.d/dummy.cfg
+    auto dummy
+    iface dummy0 inet static
+    address 10.2.2.1/32
+    pre-up ip link add dummy0 type dummy
+    post-down ip link del dummy
+
+
+
+    vagrant@vagrant:~$ sudo ip link add dummy0 type dummy
+    vagrant@vagrant:/etc/network/interfaces.d$ sudo ip addr add 10.2.2.1/32 dev dummy0
+    vagrant@vagrant:/etc/network/interfaces.d$ sudo ip link set dummy0 up
+    vagrant@vagrant:/etc/network/interfaces.d$ ip l
     1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
-        link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
+    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
     2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
-        link/ether 08:00:27:73:60:cf brd ff:ff:ff:ff:ff:ff
-    3: eth0.10@eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc noqueue state UP mode DEFAULT group default qlen 1000
-        link/ether 08:00:27:73:60:cf brd ff:ff:ff:ff:ff:ff
+    link/ether 08:00:27:73:60:cf brd ff:ff:ff:ff:ff:ff
+    3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
+    link/ether 08:00:27:ed:f7:b7 brd ff:ff:ff:ff:ff:ff
+    4: dummy0: <BROADCAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
+    link/ether 6e:a9:21:74:37:64 brd ff:ff:ff:ff:ff:ff
 
-4 . Какие типы агрегации интерфейсов есть в Linux? Какие опции есть для балансировки нагрузки? Приведите пример конфига.
+    vagrant@vagrant:~$ sudo ip route add 169.255.0.0 dev dummy0
+    vagrant@vagrant:~$ sudo ip route add 172.16.10.0/24 dev dummy0
+    vagrant@vagrant:~$ ip r
+    default via 10.0.2.2 dev eth0 proto dhcp src 10.0.2.15 metric 100
+    default via 192.168.0.1 dev eth1 proto dhcp src 192.168.0.19 metric 100
+    10.0.2.0/24 dev eth0 proto kernel scope link src 10.0.2.15
+    10.0.2.2 dev eth0 proto dhcp scope link src 10.0.2.15 metric 100
+    169.255.0.0 dev dummy0 scope link
+    172.16.10.0/24 dev dummy0 scope link
+    192.168.0.0/24 dev eth1 proto kernel scope link src 192.168.0.19
+    192.168.0.1 dev eth1 proto dhcp scope link src 192.168.0.19 metric 100
 
-Типы агрегации, или бондинга, в Linux:
-- Mode-0(balance-rr) – Данный режим используется по умолчанию. Balance-rr обеспечивается балансировку нагрузки и отказоустойчивость. В данном режиме сетевые пакеты отправляются “по кругу”, от первого интерфейса к последнему. Если выходят из строя интерфейсы, пакеты отправляются на остальные оставшиеся.
-- Mode-1(active-backup) – Один из интерфейсов работает в активном режиме, остальные в ожидающем. При обнаружении проблемы на активном интерфейсе производится переключение на ожидающий интерфейс. 
-- Mode-2(balance-xor) – Передача пакетов распределяется по типу входящего и исходящего трафика по формуле ((MAC src) XOR (MAC dest)) % число интерфейсов. Режим дает балансировку нагрузки и отказоустойчивость. 
-- Mode-3(broadcast) – Происходит передача во все объединенные интерфейсы, тем самым обеспечивая отказоустойчивость. Рекомендуется только для использования MULTICAST трафика. 
-- Mode-4(802.3ad) – динамическое объединение одинаковых портов. В данном режиме можно значительно увеличить пропускную способность входящего так и исходящего трафика. Для данного режима необходима поддержка и настройка коммутатора/коммутаторов. 
-- Mode-5(balance-tlb) – Адаптивная балансировки нагрузки трафика. Входящий трафик получается только активным интерфейсом, исходящий распределяется в зависимости от текущей загрузки канала каждого интерфейса. 
-- Mode-6(balance-alb) – Адаптивная балансировка нагрузки. Отличается более совершенным алгоритмом балансировки нагрузки чем Mode-5). Обеспечивается балансировку нагрузки как исходящего так и входящего трафика. 
+3 . Проверьте открытые TCP порты в Ubuntu, какие протоколы и приложения используют эти порты? Приведите несколько примеров.
 
-На моей машине нет возможности бондинга по причине наличия только одного сетевого интерфейса.
-Поэтому пример взят из сети
+    root@vagrant:/home/vagrant# netstat -atnlp
+    Active Internet connections (servers and established)
+    Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+    tcp        0      0 0.0.0.0:111             0.0.0.0:*               LISTEN      1/init
+    tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      566/systemd-resolve
+    tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      669/sshd: /usr/sbin
+    tcp        0      0 10.0.2.15:22            10.0.2.2:55066          ESTABLISHED 1301/sshd: vagrant
+    tcp6       0      0 :::111                  :::*                    LISTEN      1/init
+    tcp6       0      0 :::22                   :::*                    LISTEN      669/sshd: /usr/sbin
 
-    cat /etc/network/interfaces
-    # The primary network interface
-    auto bond0
-    iface bond0 inet static
-        address 192.168.1.150
-        netmask 255.255.255.0    
-        gateway 192.168.1.1
-        dns-nameservers 192.168.1.1 8.8.8.8
-        dns-search domain.local
-            slaves eth0 eth1
-            bond_mode 0
-            bond-miimon 100
-            bond_downdelay 200
-            bound_updelay 200
+Система инициализации/демон init, сервис systemd-resolve, демон sshd.
 
-5 . Сколько IP адресов в сети с маской /29 ? Сколько /29 подсетей можно получить из сети с маской /24. Приведите несколько примеров /29 подсетей внутри сети 10.10.10.0/24.
+4 . Проверьте используемые UDP сокеты в Ubuntu, какие протоколы и приложения используют эти порты?
 
-6 (узловых) адресов. 32 подсети.
-Примеры /29 подсетей внутри сети 10.10.10.0/24:
+root@vagrant:/home/vagrant# netstat -aunlp
+Active Internet connections (servers and established)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+udp        0      0 127.0.0.53:53           0.0.0.0:*                           566/systemd-resolve
+udp        0      0 192.168.0.19:68         0.0.0.0:*                           1112/systemd-networ
+udp        0      0 10.0.2.15:68            0.0.0.0:*                           1112/systemd-networ
+udp        0      0 0.0.0.0:111             0.0.0.0:*                           1/init
+udp6       0      0 :::111                  :::*                                1/init
 
-    10.10.10.249/29
-    10.10.10.250/29
-    10.10.10.252/29
+Система инициализации/демон init, сервис systemd-resolve, systemd-networkd.
 
-Комментарий к доработке:
-Почему сетей будет именно 25? Покажите расчеты.
-
-Ответ: Изначальный ответ был неправильный, перепутал цифры.
-В подсети /29 29 бит определяют маску, в сети /24 24 бита.
-Следовательно, при делении сети /24 на подсети /29 берутся 5 бит, соответственно,
-получается два в пятой степени количество подсетей. А это 32 подсети.
-
-6 . Задача: вас попросили организовать стык между 2-мя организациями. Диапазоны 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16 уже заняты. Из какой подсети допустимо взять частные IP адреса? Маску выберите из расчета максимум 40-50 хостов внутри подсети.
-
-Можно взять подсеть из диапазона 100.64.0.0 — 100.127.255.255 
-(маска подсети: 255.192.0.0 или /10):
-
-100.64.1.0/26
-
-7 . Как проверить ARP таблицу в Linux, Windows? Как очистить ARP кеш полностью? Как из ARP таблицы удалить только один нужный IP?
-
-Windows
-
-    PS C:\Users\Oleg Lon> arp -a
-
-    Interface: 192.168.56.1 --- 0x12
-      Internet Address      Physical Address      Type
-      192.168.56.255        ff-ff-ff-ff-ff-ff     static
-      224.0.0.2             01-00-5e-00-00-02     static
-      224.0.0.22            01-00-5e-00-00-16     static
-      224.0.0.251           01-00-5e-00-00-fb     static
-      224.0.0.252           01-00-5e-00-00-fc     static
-      239.255.255.250       01-00-5e-7f-ff-fa     static
-      255.255.255.255       ff-ff-ff-ff-ff-ff     static
-
-Linux
-
-    vagrant@vagrant:~$ sudo arp-scan --interface=eth0 --localnet
-    Interface: eth0, type: EN10MB, MAC: 08:00:27:73:60:cf, IPv4: 10.0.2.15
-    Starting arp-scan 1.9.7 with 256 hosts (https://github.com/royhills/arp-scan)
-    10.0.2.2        52:54:00:12:35:02       QEMU
-    10.0.2.3        52:54:00:12:35:03       QEMU
-    10.0.2.4        52:54:00:12:35:04       QEMU
-
-    3 packets received by filter, 0 packets dropped by kernel
-    Ending arp-scan 1.9.7: 256 hosts scanned in 2.059 seconds (124.33 hosts/sec). 3 responded
-
-    Очистить кэш arp:
-
-Linux
-
-    vagrant@vagrant:~$ sudo ip -s -s neigh flush all
-    10.0.2.3 dev eth0 lladdr 52:54:00:12:35:03 used 394/196/153 probes 1 STALE
-    10.0.2.2 dev eth0 lladdr 52:54:00:12:35:02 ref 1 used 9/0/6 probes 1 REACHABLE
-
-    *** Round 1, deleting 2 entries ***
-
-Windows
- 
-    netsh interface ip delete arpcache
-
-Удалить один ip:
-
-    arp -d <ip> (в моем дистрибутиве Ubuntu нет такой команды, та же команда в Windows)
-
-    vagrant@vagrant:~$ sudo ip neighbour del dev eth0 10.0.2.2
-
-8 . Установите эмулятор EVE-ng.
-
-Инструкция по установке - https://github.com/svmyasnikov/eve-ng
-
-Выполните задания на lldp, vlan, bonding в эмуляторе EVE-ng.
-
-
-
-
-
-
-
+5 . Используя diagrams.net, создайте L3 диаграмму вашей домашней сети или любой другой сети, с которой вы работали.
 
 
 
