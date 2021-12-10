@@ -275,14 +275,14 @@
 
 4 . Проверьте используемые UDP сокеты в Ubuntu, какие протоколы и приложения используют эти порты?
 
-root@vagrant:/home/vagrant# netstat -aunlp
-Active Internet connections (servers and established)
-Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-udp        0      0 127.0.0.53:53           0.0.0.0:*                           566/systemd-resolve
-udp        0      0 192.168.0.19:68         0.0.0.0:*                           1112/systemd-networ
-udp        0      0 10.0.2.15:68            0.0.0.0:*                           1112/systemd-networ
-udp        0      0 0.0.0.0:111             0.0.0.0:*                           1/init
-udp6       0      0 :::111                  :::*                                1/init
+    root@vagrant:/home/vagrant# netstat -aunlp
+    Active Internet connections (servers and established)
+    Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
+    udp        0      0 127.0.0.53:53           0.0.0.0:*                           566/systemd-resolve
+    udp        0      0 192.168.0.19:68         0.0.0.0:*                           1112/systemd-networ
+    udp        0      0 10.0.2.15:68            0.0.0.0:*                           1112/systemd-networ
+    udp        0      0 0.0.0.0:111             0.0.0.0:*                           1/init
+    udp6       0      0 :::111                  :::*                                1/init
 
 Система инициализации/демон init, сервис systemd-resolve, systemd-networkd.
 
