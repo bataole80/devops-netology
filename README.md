@@ -1,295 +1,293 @@
-1 . 
-    Подключитесь к публичному маршрутизатору в интернет. Найдите маршрут к вашему публичному IP
+Домашнее задание к занятию "3.9. Элементы безопасности информационных систем"
 
-    telnet route-views.routeviews.org
-    Username: rviews
-    show ip route x.x.x.x/32
-    show bgp x.x.x.x/32
+1 . Установите Bitwarden плагин для браузера. Зарегестрируйтесь и сохраните несколько паролей.
 
-Ответ:
+![biwarden](bitwarden.jpg)
+![biwarden1](bitwarden1.jpg)
 
-    vagrant@vagrant:~$ telnet route-views.routeviews.org
-    Trying 128.223.51.103...
-    Connected to route-views.routeviews.org.
-    Escape character is '^]'.
-    C
-    **********************************************************************
+2 . Установите Google authenticator на мобильный телефон. Настройте вход в Bitwarden акаунт через Google authenticator OTP.
 
-                    RouteViews BGP Route Viewer
-                    route-views.routeviews.org
+![biwarden2](bitwarden2.jpg)
 
-     route views data is archived on http://archive.routeviews.org
+3 . Установите apache2, сгенерируйте самоподписанный сертификат, настройте тестовый сайт для работы по HTTPS.
 
-     This hardware is part of a grant by the NSF.
-     Please contact help@routeviews.org if you have questions, or
-     if you wish to contribute your view.
+    vagrant@vagrant:~$ sudo systemctl status apache2
+    ● apache2.service - The Apache HTTP Server
+     Loaded: loaded (/lib/systemd/system/apache2.service; enabled; vendor preset: enabled)
+     Active: active (running) since Fri 2021-12-17 19:29:29 UTC; 54s ago
+       Docs: https://httpd.apache.org/docs/2.4/
+      Main PID: 13548 (apache2)
+      Tasks: 55 (limit: 1071)
+     Memory: 5.6M
+     CGroup: /system.slice/apache2.service
+             ├─13548 /usr/sbin/apache2 -k start
+             ├─13549 /usr/sbin/apache2 -k start
+             └─13550 /usr/sbin/apache2 -k start
 
-     This router has views of full routing tables from several ASes.
-     The list of peers is located at http://www.routeviews.org/peers
-     in route-views.oregon-ix.net.txt
+    Dec 17 19:29:29 vagrant systemd[1]: Starting The Apache HTTP Server...
+    Dec 17 19:29:29 vagrant systemd[1]: Started The Apache HTTP Server.
 
-     NOTE: The hardware was upgraded in August 2014.  If you are seeing
-     the error message, "no default Kerberos realm", you may want to
-     in Mac OS X add "default unset autologin" to your ~/.telnetrc
+    vagrant@vagrant:~$ sudo ufw app list
+    Available applications:
+     Apache
+     Apache Full
+     Apache Secure
+    OpenSSH
 
-     To login, use the username "rviews".
+    vagrant@vagrant:~$ sudo ufw allow 'Apache Secure'
+    Rules updated
+    Rules updated (v6)
 
-     **********************************************************************
+    vagrant@vagrant:~$ sudo a2enmod ssl
+    Considering dependency setenvif for ssl:
+    Module setenvif already enabled
+    Considering dependency mime for ssl:
+    Module mime already enabled
+    Considering dependency socache_shmcb for ssl:
+    Enabling module socache_shmcb.
+    Enabling module ssl.
+    See /usr/share/doc/apache2/README.Debian.gz on how to configure SSL and create self-signed certificates.
+    To activate the new configuration, you need to run:
+      systemctl restart apache2
+    vagrant@vagrant:~$ sudo systemctl restart apache2
 
-    User Access Verification
+    vagrant@vagrant:~$ sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/ssl/private/apache-selfsigned.key -out /etc/ssl/certs/apache-selfsigned.crt
+    Generating a RSA private key
+    ...................................................................................+++++
+    ..............................+++++
+    writing new private key to '/etc/ssl/private/apache-selfsigned.key'
+    -----
+    You are about to be asked to enter information that will be incorporated
+    into your certificate request.
+    What you are about to enter is what is called a Distinguished Name or a DN.
+    There are quite a few fields but you can leave some blank
+    For some fields there will be a default value,
+    If you enter '.', the field will be left blank.
+    -----
+    Country Name (2 letter code) [AU]:RU
+    string is too long, it needs to be no more than 2 bytes long
+    Country Name (2 letter code) [AU]:
+    State or Province Name (full name) [Some-State]:
+    Locality Name (eg, city) []:
+    Organization Name (eg, company) [Internet Widgits Pty Ltd]:
+    Organizational Unit Name (eg, section) []:
+    Common Name (e.g. server FQDN or YOUR name) []:oleg.batalov.com
+    Email Address []:
 
-    Username: rviews
-    route-views>
+    vagrant@vagrant:/etc/apache2/sites-available$ cat oleg.batalov.com.conf
+    <VirtualHost *:443>
+    ServerName oleg.batalov.com
+    DocumentRoot /var/www/html/index.html
 
-    route-views>show ip route 109.184.55.145
-    Routing entry for 109.184.0.0/17
-      Known via "bgp 6447", distance 20, metric 0
-      Tag 6939, type external
-      Last update from 64.71.137.241 1w3d ago
-      Routing Descriptor Blocks:
-     * 64.71.137.241, from 64.71.137.241, 1w3d ago
-      Route metric is 0, traffic share count is 1
-      AS Hops 2
-      Route tag 6939
-      MPLS label: none
-    route-views>
+    SSLEngine on
+    SSLCertificateFile /etc/ssl/certs/apache-selfsigned.crt
+    SSLCertificateKeyFile /etc/ssl/private/apache-selfsigned.key
+    </VirtualHost>
 
-    route-views>show bgp 109.184.55.145
-    BGP routing table entry for 109.184.0.0/17, version 1388583535
-    Paths: (23 available, best #23, table default)
-    Not advertised to any peer
-    Refresh Epoch 1
-    2497 12389
-      202.232.0.2 from 202.232.0.2 (58.138.96.254)
-        Origin IGP, localpref 100, valid, external
-        path 7FE16938B8B0 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    20912 3257 3356 12389
-    212.66.96.126 from 212.66.96.126 (212.66.96.126)
-      Origin IGP, localpref 100, valid, external
-      Community: 3257:8070 3257:30515 3257:50001 3257:53900 3257:53902 20912:65004
-      path 7FE0AE715280 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    4901 6079 3356 12389
-    162.250.137.254 from 162.250.137.254 (162.250.137.254)
-      Origin IGP, localpref 100, valid, external
-      Community: 65000:10100 65000:10300 65000:10400
-      path 7FE0121167D0 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 3
-    3303 12389
-    217.192.89.50 from 217.192.89.50 (138.187.128.158)
-      Origin IGP, localpref 100, valid, external
-      Community: 3303:1004 3303:1006 3303:1030 3303:3056
-      path 7FE171248248 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    7660 2516 12389
-    203.181.248.168 from 203.181.248.168 (203.181.248.168)
-      Origin IGP, localpref 100, valid, external
-      Community: 2516:1050 7660:9001
-      path 7FE0F1974000 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    57866 3356 12389
-    37.139.139.17 from 37.139.139.17 (37.139.139.17)
-      Origin IGP, metric 0, localpref 100, valid, external
-      Community: 3356:2 3356:22 3356:100 3356:123 3356:501 3356:901 3356:2065
-      path 7FE11BF6AB70 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    7018 3356 12389
-    12.0.1.63 from 12.0.1.63 (12.0.1.63)
-      Origin IGP, localpref 100, valid, external
-      Community: 7018:5000 7018:37232
-      path 7FE08D2E6CA8 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    3333 1103 12389
-    193.0.0.56 from 193.0.0.56 (193.0.0.56)
-      Origin IGP, localpref 100, valid, external
-      path 7FE1319EBAB8 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    49788 12552 12389
-    91.218.184.60 from 91.218.184.60 (91.218.184.60)
-      Origin IGP, localpref 100, valid, external
-      Community: 12552:12000 12552:12100 12552:12101 12552:22000
-      Extended Community: 0x43:100:1
-      path 7FE136B730D8 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    8283 1299 12389
-    94.142.247.3 from 94.142.247.3 (94.142.247.3)
-      Origin IGP, metric 0, localpref 100, valid, external
-      Community: 1299:30000 8283:1 8283:101 8283:103
-      unknown transitive attribute: flag 0xE0 type 0x20 length 0x24
-        value 0000 205B 0000 0000 0000 0001 0000 205B
-              0000 0005 0000 0001 0000 205B 0000 0005
-              0000 0003
-      path 7FE1678D2D88 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    3356 12389
-    4.68.4.46 from 4.68.4.46 (4.69.184.201)
-      Origin IGP, metric 0, localpref 100, valid, external
-      Community: 3356:2 3356:22 3356:100 3356:123 3356:501 3356:901 3356:2065
-      path 7FE172483708 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    1221 4637 12389
-    203.62.252.83 from 203.62.252.83 (203.62.252.83)
-      Origin IGP, localpref 100, valid, external
-      path 7FE03908ABA0 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    852 3356 12389
-    154.11.12.212 from 154.11.12.212 (96.1.209.43)
-      Origin IGP, metric 0, localpref 100, valid, external
-      path 7FE038557FE0 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    20130 6939 12389
-    140.192.8.16 from 140.192.8.16 (140.192.8.16)
-      Origin IGP, localpref 100, valid, external
-      path 7FE0160E9DF0 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    701 1273 12389
-    137.39.3.55 from 137.39.3.55 (137.39.3.55)
-      Origin IGP, localpref 100, valid, external
-      path 7FE104D79FD0 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    3257 1299 12389
-    89.149.178.10 from 89.149.178.10 (213.200.83.26)
-      Origin IGP, metric 10, localpref 100, valid, external
-      Community: 3257:8794 3257:30052 3257:50001 3257:54900 3257:54901
-      path 7FE128C0A518 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    3549 3356 12389
-    208.51.134.254 from 208.51.134.254 (67.16.168.191)
-      Origin IGP, metric 0, localpref 100, valid, external
-      Community: 3356:2 3356:22 3356:100 3356:123 3356:501 3356:901 3356:2065 3549:2581 3549:30840
-      path 7FE0EF823D18 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    53767 14315 6453 6453 3356 12389
-    162.251.163.2 from 162.251.163.2 (162.251.162.3)
-      Origin IGP, localpref 100, valid, external
-      Community: 14315:5000 53767:5000
-      path 7FE02119BAE0 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    101 3356 12389
-    209.124.176.223 from 209.124.176.223 (209.124.176.223)
-      Origin IGP, localpref 100, valid, external
-      Community: 101:20100 101:20110 101:22100 3356:2 3356:22 3356:100 3356:123 3356:501 3356:901 3356:2065
-      Extended Community: RT:101:22100
-      path 7FE0E59DBCF8 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    19214 3257 3356 12389
-    208.74.64.40 from 208.74.64.40 (208.74.64.40)
-      Origin IGP, localpref 100, valid, external
-      Community: 3257:8108 3257:30048 3257:50002 3257:51200 3257:51203
-      path 7FE123526940 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    1351 6939 12389
-    132.198.255.253 from 132.198.255.253 (132.198.255.253)
-      Origin IGP, localpref 100, valid, external
-      path 7FE120EA9A58 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    3561 3910 3356 12389
-    206.24.210.80 from 206.24.210.80 (206.24.210.80)
-      Origin IGP, localpref 100, valid, external
-      path 7FE1260BE550 RPKI State valid
-      rx pathid: 0, tx pathid: 0
-    Refresh Epoch 1
-    6939 12389
-    64.71.137.241 from 64.71.137.241 (216.218.252.164)
-      Origin IGP, localpref 100, valid, external, best
-      path 7FE1260C4250 RPKI State valid
-      rx pathid: 0, tx pathid: 0x0
-    route-views>
+    vagrant@vagrant:/etc/apache2/sites-available$ sudo a2ensite oleg.batalov.com.conf
+    Site oleg.batalov.com already enabled
+    vagrant@vagrant:/etc/apache2/sites-available$ sudo apache2ctl configtest
+    Syntax OK
 
-2 . Создайте dummy0 интерфейс в Ubuntu. Добавьте несколько статических маршрутов. Проверьте таблицу маршрутизации.
+    vagrant@vagrant:/etc/apache2/sites-available$ sudo systemctl reload apache2
 
+Браузер пожаловался на то, что сертификат не trusted, и позволил зайти на сайт.
+
+![testsite](testsite.jpg)
+
+4 . Проверьте на TLS уязвимости произвольный сайт в интернете (кроме сайтов МВД, ФСБ, МинОбр, НацБанк, РосКосмос, РосАтом, РосНАНО и любых госкомпаний, объектов КИИ, ВПК ... и тому подобное).
+
+    vagrant@vagrant:~/testssl.sh$ ./testssl.sh -U --sneaky https://netology.ru
+
+    ###########################################################
+    testssl.sh       3.1dev from https://testssl.sh/dev/
+    (2201a28 2021-12-13 18:24:34 -- )
+
+      This program is free software. Distribution and
+             modification under GPLv2 permitted.
+      USAGE w/o ANY WARRANTY. USE IT AT YOUR OWN RISK!
+
+       Please file bugs @ https://testssl.sh/bugs/
+
+    ###########################################################
+
+    Using "OpenSSL 1.0.2-chacha (1.0.2k-dev)" [~183 ciphers]
+    on vagrant:./bin/openssl.Linux.x86_64
+    (built: "Jan 18 17:12:17 2019", platform: "linux-x86_64")
+
+
+    Start 2021-12-18 10:15:50        -->> 100.96.71.114:443 (netology.ru) <<--
+
+    rDNS (100.96.71.114):   netology.ru.
+    Service detected:       HTTP
+
+
+    Testing vulnerabilities
+
+    Heartbleed (CVE-2014-0160)                not vulnerable (OK), no heartbeat extension
+    CCS (CVE-2014-0224)                       not vulnerable (OK)
+    Ticketbleed (CVE-2016-9244), experiment.  not vulnerable (OK), no session tickets
+    ROBOT                                     not vulnerable (OK)
+    Secure Renegotiation (RFC 5746)           OpenSSL handshake didn't succeed
+    Secure Client-Initiated Renegotiation     not vulnerable (OK)
+    CRIME, TLS (CVE-2012-4929)                not vulnerable (OK)
+    BREACH (CVE-2013-3587)                    potentially NOT ok, "gzip" HTTP compression detected. - only supplied "/" tested
+                                           Can be ignored for static pages or if no secrets in the page
+    POODLE, SSL (CVE-2014-3566)               not vulnerable (OK)
+    TLS_FALLBACK_SCSV (RFC 7507)              Downgrade attack prevention supported (OK)
+    SWEET32 (CVE-2016-2183, CVE-2016-6329)    VULNERABLE, uses 64 bit block ciphers
+    FREAK (CVE-2015-0204)                     not vulnerable (OK)
+    DROWN (CVE-2016-0800, CVE-2016-0703)      not vulnerable on this host and port (OK)
+                                           make sure you don't use this certificate elsewhere with SSLv2 enabled services
+                                           https://censys.io/ipv4?q=0E745E5E77A60345EB6E6B33B99A36286C2203D687F3377FBC685B2434518C53 could help you to find out
+    LOGJAM (CVE-2015-4000), experimental      not vulnerable (OK): no DH EXPORT ciphers, no DH key detected with <= TLS 1.2
+    BEAST (CVE-2011-3389)                     TLS1: ECDHE-RSA-AES128-SHA AES128-SHA ECDHE-RSA-AES256-SHA AES256-SHA DES-CBC3-SHA
+                                           VULNERABLE -- but also supports higher protocols  TLSv1.1 TLSv1.2 (likely mitigated)
+    LUCKY13 (CVE-2013-0169), experimental     potentially VULNERABLE, uses cipher block chaining (CBC) ciphers with TLS. Check patches
+    Winshock (CVE-2014-6321), experimental    not vulnerable (OK)
+    RC4 (CVE-2013-2566, CVE-2015-2808)        no RC4 ciphers detected (OK)
+
+
+    Done 2021-12-18 10:16:24 [  36s] -->> 100.96.71.114:443 (netology.ru) <<--
+
+5 . Установите на Ubuntu ssh сервер, сгенерируйте новый приватный ключ. Скопируйте свой публичный ключ на другой сервер. Подключитесь к серверу по SSH-ключу.
+
+    vagrant@vagrant:~$ sudo apt install openssh-server -y
+    Reading package lists... Done
+    Building dependency tree
+    Reading state information... Done
+    openssh-server is already the newest version (1:8.2p1-4ubuntu0.3).
+    0 upgraded, 0 newly installed, 0 to remove and 105 not upgraded.
+    vagrant@vagrant:~$ sudo systemctl enable ssh
+    Synchronizing state of ssh.service with SysV service script with /lib/systemd/systemd-sysv-install.
+    Executing: /lib/systemd/systemd-sysv-install enable ssh
+    vagrant@vagrant:~$ sudo systemctl start ssh
+
+    vagrant@vagrant:~$ sudo systemctl status ssh
+    ● ssh.service - OpenBSD Secure Shell server
+     Loaded: loaded (/lib/systemd/system/ssh.service; enabled; vendor preset: enabled)
+     Active: active (running) since Sat 2021-12-18 10:55:40 UTC; 5min ago
+       Docs: man:sshd(8)
+             man:sshd_config(5)
+      Main PID: 14695 (sshd)
+      Tasks: 1 (limit: 1071)
+     Memory: 1.1M
+     CGroup: /system.slice/ssh.service
+             └─14695 sshd: /usr/sbin/sshd -D [listener] 0 of 10-100 startups
+
+    Dec 18 10:55:40 vagrant systemd[1]: Starting OpenBSD Secure Shell server...
+    Dec 18 10:55:40 vagrant sshd[14695]: Server listening on 0.0.0.0 port 22.
+    Dec 18 10:55:40 vagrant sshd[14695]: Server listening on :: port 22.
+    Dec 18 10:55:40 vagrant systemd[1]: Started OpenBSD Secure Shell server.
+
+    vagrant@vagrant:~$ sudo ufw allow ssh
+    Rules updated
+    Rules updated (v6)
+
+    vagrant@vagrant:~$ ssh-keygen -t rsa -b 4096
+    Generating public/private rsa key pair.
+    Enter file in which to save the key (/home/vagrant/.ssh/id_rsa):
+    Enter passphrase (empty for no passphrase):
+    Enter same passphrase again:
+    Your identification has been saved in /home/vagrant/.ssh/id_rsa
+    Your public key has been saved in /home/vagrant/.ssh/id_rsa.pub
+
+    vagrant@master:~/.ssh$ ssh-copy-id vagrant@10.0.0.11
+    /usr/bin/ssh-copy-id: INFO: Source of key(s) to be installed: "/home/vagrant/.ssh/id_rsa.pub"
+    The authenticity of host '10.0.0.11 (10.0.0.11)' can't be established.
+    ECDSA key fingerprint is SHA256:wSHl+h4vAtTT7mbkj2lbGyxWXWTUf6VUliwpncjwLPM.
+    Are you sure you want to continue connecting (yes/no/[fingerprint])? yes
+    /usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+    /usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+    vagrant@10.0.0.11's password:
+
+    Number of key(s) added: 1
+
+    Now try logging into the machine, with:   "ssh 'vagrant@10.0.0.11'"
+    and check to make sure that only the key(s) you wanted were added.
+
+    vagrant@master:~/.ssh$ ssh 'vagrant@10.0.0.11'
+    Welcome to Ubuntu 20.04.2 LTS (GNU/Linux 5.4.0-80-generic x86_64)
+
+    * Documentation:  https://help.ubuntu.com
+    * Management:     https://landscape.canonical.com
+    * Support:        https://ubuntu.com/advantage
+
+      System information as of Sat 18 Dec 2021 12:13:16 PM UTC
+
+      System load:  0.07              Processes:             110
+     Usage of /:   2.5% of 61.31GB   Users logged in:       1
+      Memory usage: 15%               IPv4 address for eth0: 10.0.2.15
+      Swap usage:   0%                IPv4 address for eth1: 10.0.0.11
+
+
+    This system is built by the Bento project by Chef Software
+    More information can be found at https://github.com/chef/bento
+    Last login: Sat Dec 18 12:07:43 2021 from 10.0.2.2
+
+6. Переименуйте файлы ключей из задания 5. Настройте файл конфигурации SSH клиента, так чтобы вход на удаленный сервер осуществлялся по имени сервера.
+
+        vagrant@master:~/.ssh$ mv id_rsa id_rsa.bkup
+        vagrant@master:~/.ssh$ mv id_rsa.pub id_rsa.pub.bkup
+        vagrant@master:~/.ssh$ touch config
+        vagrant@master:~/.ssh$ chmod 600 config
+   
+        vagrant@master:~/.ssh$ cat config
+        Host slave
+        IdentityFile ~/.ssh/id_rsa
+            HostName slave
+           User vagrant
+            Port 22
+
+        vagrant@master:~/.ssh$ ssh vagrant@slave
+          Welcome to Ubuntu 20.04.2 LTS (GNU/Linux 5.4.0-80-generic x86_64)
+
+        * Documentation:  https://help.ubuntu.com
+         * Management:     https://landscape.canonical.com
+         * Support:        https://ubuntu.com/advantage
+
+         System information as of Sat 18 Dec 2021 12:59:48 PM UTC
+
+         System load:  0.08              Processes:             111
+         Usage of /:   2.5% of 61.31GB   Users logged in:       0
+         Memory usage: 15%               IPv4 address for eth0: 10.0.2.15
+         Swap usage:   0%                IPv4 address for eth1: 10.0.0.11
+
+
+      This system is built by the Bento project by Chef Software
+      More information can be found at https://github.com/chef/bento
+      Last login: Sat Dec 18 12:58:45 2021 from 10.0.0.10
+      vagrant@slave:~$
+
+7 . Соберите дамп трафика утилитой tcpdump в формате pcap, 100 пакетов. Откройте файл pcap в Wireshark.
+
+      vagrant@master:~/.ssh$ sudo tcpdump -c 100 -w /tmp/packet.pcap
+      tcpdump: listening on eth0, link-type EN10MB (Ethernet), capture size 262144 bytes
+      100 packets captured
+      110 packets received by filter
+      0 packets dropped by kernel
+
+      vagrant@master:~/.ssh$ wireshark -r /tmp/packet.pcap
+      qt.qpa.xcb: could not connect to display
+      qt.qpa.plugin: Could not load the Qt platform plugin "xcb" in "" even though it was found.
+      This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
+
+      Available platform plugins are: eglfs, linuxfb, minimal, minimalegl, offscreen, vnc, xcb.
+
+      Aborted (core dumped)
+
+Не удалось запустить wireshark на Linux машине. Пробовал всякие решения, не помогло.
+Поэтому пришлось установить инструмент на Windows хост машине.
+
+![wireshark](wireshark.jpg)
+
+
+
+   
+   
     
-Добавить в конфигурацию
-
-    root@vagrant:/home/vagrant# echo "dummy" >> /etc/modules
-    root@vagrant:/home/vagrant# echo "options dummy numdummies=2" > /etc/modprobe.d/dummy.conf
-    vagrant@vagrant:~$ cat /etc/network/interfaces.d/dummy.cfg
-    auto dummy
-    iface dummy0 inet static
-    address 10.2.2.1/32
-    pre-up ip link add dummy0 type dummy
-    post-down ip link del dummy
 
 
 
-    vagrant@vagrant:~$ sudo ip link add dummy0 type dummy
-    vagrant@vagrant:/etc/network/interfaces.d$ sudo ip addr add 10.2.2.1/32 dev dummy0
-    vagrant@vagrant:/etc/network/interfaces.d$ sudo ip link set dummy0 up
-    vagrant@vagrant:/etc/network/interfaces.d$ ip l
-    1: lo: <LOOPBACK,UP,LOWER_UP> mtu 65536 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
-    link/loopback 00:00:00:00:00:00 brd 00:00:00:00:00:00
-    2: eth0: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
-    link/ether 08:00:27:73:60:cf brd ff:ff:ff:ff:ff:ff
-    3: eth1: <BROADCAST,MULTICAST,UP,LOWER_UP> mtu 1500 qdisc fq_codel state UP mode DEFAULT group default qlen 1000
-    link/ether 08:00:27:ed:f7:b7 brd ff:ff:ff:ff:ff:ff
-    4: dummy0: <BROADCAST,NOARP,UP,LOWER_UP> mtu 1500 qdisc noqueue state UNKNOWN mode DEFAULT group default qlen 1000
-    link/ether 6e:a9:21:74:37:64 brd ff:ff:ff:ff:ff:ff
-
-    vagrant@vagrant:~$ sudo ip route add 169.255.0.0 dev dummy0
-    vagrant@vagrant:~$ sudo ip route add 172.16.10.0/24 dev dummy0
-    vagrant@vagrant:~$ ip r
-    default via 10.0.2.2 dev eth0 proto dhcp src 10.0.2.15 metric 100
-    default via 192.168.0.1 dev eth1 proto dhcp src 192.168.0.19 metric 100
-    10.0.2.0/24 dev eth0 proto kernel scope link src 10.0.2.15
-    10.0.2.2 dev eth0 proto dhcp scope link src 10.0.2.15 metric 100
-    169.255.0.0 dev dummy0 scope link
-    172.16.10.0/24 dev dummy0 scope link
-    192.168.0.0/24 dev eth1 proto kernel scope link src 192.168.0.19
-    192.168.0.1 dev eth1 proto dhcp scope link src 192.168.0.19 metric 100
-
-3 . Проверьте открытые TCP порты в Ubuntu, какие протоколы и приложения используют эти порты? Приведите несколько примеров.
-
-    root@vagrant:/home/vagrant# netstat -atnlp
-    Active Internet connections (servers and established)
-    Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-    tcp        0      0 0.0.0.0:111             0.0.0.0:*               LISTEN      1/init
-    tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      566/systemd-resolve
-    tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      669/sshd: /usr/sbin
-    tcp        0      0 10.0.2.15:22            10.0.2.2:55066          ESTABLISHED 1301/sshd: vagrant
-    tcp6       0      0 :::111                  :::*                    LISTEN      1/init
-    tcp6       0      0 :::22                   :::*                    LISTEN      669/sshd: /usr/sbin
-
-Система инициализации/демон init, сервис systemd-resolve, демон sshd.
-
-4 . Проверьте используемые UDP сокеты в Ubuntu, какие протоколы и приложения используют эти порты?
-
-    root@vagrant:/home/vagrant# netstat -aunlp
-    Active Internet connections (servers and established)
-    Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name
-    udp        0      0 127.0.0.53:53           0.0.0.0:*                           566/systemd-resolve
-    udp        0      0 192.168.0.19:68         0.0.0.0:*                           1112/systemd-networ
-    udp        0      0 10.0.2.15:68            0.0.0.0:*                           1112/systemd-networ
-    udp        0      0 0.0.0.0:111             0.0.0.0:*                           1/init
-    udp6       0      0 :::111                  :::*                                1/init
-
-Система инициализации/демон init, сервис systemd-resolve, systemd-networkd.
-
-5 . Используя diagrams.net, создайте L3 диаграмму вашей домашней сети или любой другой сети, с которой вы работали.
-
-![networkdiagram](diagram.png)
 
 
-
-    
