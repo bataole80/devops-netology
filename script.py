@@ -1,5 +1,7 @@
 import os
 
+print("Hello!")
+
 bash_command = ["cd ~/Documents/TRAINING/DEVOPS/NETOLOGY/devops-netology ", "git status"]
 result_os = os.popen(' && '.join(bash_command)).read()
 is_change = False
