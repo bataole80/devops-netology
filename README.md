@@ -65,7 +65,7 @@
 
 2. Установите ufw и разрешите к этой машине сессии на порты 22 и 443, при этом трафик на интерфейсе localhost (lo) должен ходить свободно на все порты. 
    
-    
+    ```bash
     vagrant@master:~$ sudo apt install ufw
     Reading package lists... Done
     Building dependency tree
@@ -104,10 +104,11 @@
     22 (v6)                    ALLOW IN    Anywhere (v6)
     443 (v6)                   ALLOW IN    Anywhere (v6)
     Anywhere (v6) on lo        ALLOW IN    Anywhere (v6)
+   ```
 
 3. Установите hashicorp vault ([инструкция по ссылке](https://learn.hashicorp.com/tutorials/vault/getting-started-install?in=vault/getting-started#install-vault)).
    
-
+```bash
     vagrant@master:~$ vault
     Usage: vault <command> [args]
 
@@ -121,10 +122,11 @@
     server      Start a Vault server
     status      Print seal and HA status
     unwrap      Unwrap a wrapped secret
+    ```
 
 4. Cоздайте центр сертификации по инструкции ([ссылка](https://learn.hashicorp.com/tutorials/vault/pki-engine?in=vault/secrets-management)) и выпустите сертификат для использования его в настройке веб-сервера nginx (срок жизни сертификата - месяц).
    
-
+```bash
     vagrant@master:~$ export VAULT_ADDR=http://127.0.0.1:8200
     vagrant@master:~$ export VAULT_TOKEN=root
     vagrant@master:~$ ps -eaf | grep vault
@@ -211,7 +213,7 @@ aI2CldMU7MtI4E6mnb+nZhXsUgT/pOfDCvdHG0rE86lBkA4VdcOx5ci/kVgrNa36
 yNl/LyhfJTidu5I2O5rLF+NOOPGsuX4sgw==
 -----END CERTIFICATE-----
 
-
+```
    
 5. Установите корневой сертификат созданного центра сертификации в доверенные в хостовой системе.
 
@@ -219,7 +221,7 @@ yNl/LyhfJTidu5I2O5rLF+NOOPGsuX4sgw==
 
 6. Установите nginx.
 
-    
+    ```bash
     vagrant@master:~$ nginx -v
     nginx version: nginx/1.18.0 (Ubuntu)  
     vagrant@master:~$ sudo ufw app list
@@ -267,13 +269,13 @@ yNl/LyhfJTidu5I2O5rLF+NOOPGsuX4sgw==
     443 (v6)                   ALLOW       Anywhere (v6)
     Anywhere (v6) on lo        ALLOW       Anywhere (v6)
     Nginx Full (v6)            ALLOW       Anywhere (v6)
-
+```
 
 7. По инструкции ([ссылка](https://nginx.org/en/docs/http/configuring_https_servers.html)) настройте nginx на https, используя ранее подготовленный сертификат:
   - можно использовать стандартную стартовую страницу nginx для демонстрации работы сервера;
   - можно использовать и другой html файл, сделанный вами;
 
-    
+    ```bash
     vagrant@master:/var/log/nginx$ cat /etc/nginx/sites-enabled/test.oleg.batalov.com
     server {
         listen 443 ssl default_server;
@@ -320,6 +322,7 @@ yNl/LyhfJTidu5I2O5rLF+NOOPGsuX4sgw==
 
     Dec 30 22:06:24 master systemd[1]: Starting A high performance web server and a reverse proxy server...
     Dec 30 22:06:24 master systemd[1]: Started A high performance web server and a reverse proxy server.
+```
 
 8. Откройте в браузере на хосте https адрес страницы, которую обслуживает сервер nginx.
    
@@ -374,7 +377,7 @@ yNl/LyhfJTidu5I2O5rLF+NOOPGsuX4sgw==
     ```
     Testing:
 
-    
+    ```bash
     vagrant@master:/etc/nginx/certificate$ ~/cert_script.sh
     Certificate and key exist, saving the backup
     Certificate backup directory exists
@@ -397,12 +400,14 @@ yNl/LyhfJTidu5I2O5rLF+NOOPGsuX4sgw==
 
     Dec 31 19:20:16 master systemd[1]: Starting A high performance web server and a reverse proxy server...
     Dec 31 19:20:16 master systemd[1]: Started A high performance web server and a reverse proxy server.
+    ```
 
 ![test](test.jpg)
 
 
 10. Поместите скрипт в crontab, чтобы сертификат обновлялся какого-то числа каждого месяца в удобное для вас время.
 
+```bash
     
     vagrant@master:/etc/nginx/certificate$ crontab -l
     32 19 31 * * /home/vagrant/cert_script.sh >> /home/vagrant/cert_script.log 2>&1
@@ -439,6 +444,8 @@ yNl/LyhfJTidu5I2O5rLF+NOOPGsuX4sgw==
     Dec 31 19:32:01 master systemd[1]: Stopped A high performance web server and a reverse proxy server.
     Dec 31 19:32:01 master systemd[1]: Starting A high performance web server and a reverse proxy server...
     Dec 31 19:32:01 master systemd[1]: Started A high performance web server and a reverse proxy server.
+
+```
 
 ## Результат
 
