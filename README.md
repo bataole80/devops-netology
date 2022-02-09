@@ -140,7 +140,7 @@
     
                        
 
-    
+    ```
     vagrant@server1:~$ sudo docker run -t -i -v /home/vagrant/data:/data centos /bin/bash &
     [2] 25210
     vagrant@server1:~$ sudo docker run -t -i -v /home/vagrant/data:/data debian /bin/bash &
@@ -173,7 +173,7 @@
     123
     456
     root@83925844af09:/data#
-    
+    ```
     
 
 
