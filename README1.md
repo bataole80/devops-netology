@@ -94,8 +94,6 @@ packer {
 source "amazon-ebs" "centos" {
   ami_name      = "learn-packer-linux-aws"
   instance_type = "t2.micro"
-  access_key = "AKIA4ZMKJE475C6GFC6Z"
-  secret_key = "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"
   region        = "eu-west-2"
   source_ami_filter {
     filters = {
