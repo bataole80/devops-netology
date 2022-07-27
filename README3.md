@@ -12,6 +12,22 @@
 
 Приведите получившуюся команду или docker-compose манифест.
 
+```
+vagrant@server1:~$ sudo docker run --name postgres -e PGDATA=$HOME/docker/volumes/postgres/pgdata -v "backup":$HOME/docker/volumes/postgres/backup -d postgres
+9bbe686c6a5d72122b82c5a03068443edd2f6175cc6493368321dfcb8095384d
+vagrant@server1:~$ sudo docker ps -a
+CONTAINER ID   IMAGE          COMMAND                  CREATED              STATUS                      PORTS      NAMES
+b4b7102830e8   postgres       "docker-entrypoint.s…"   About a minute ago   Up About a minute           5432/tcp   brave_ellis
+44ad59d62eca   debian         "/bin/bash"              5 months ago         Exited (0) 5 months ago                confident_black
+e5ddb4416bd0   5d0da3dc9764   "/bin/bash"              5 months ago         Exited (0) 5 months ago                fervent_carson
+83925844af09   debian         "/bin/bash"              5 months ago         Exited (137) 5 months ago              sharp_matsumoto
+884b32776148   5d0da3dc9764   "/bin/bash"              5 months ago         Exited (0) 5 months ago                gallant_wozniak
+bd7e046277f4   5d0da3dc9764   "/bin/bash"              5 months ago         Exited (0) 5 months ago                sleepy_saha
+bce8a58c2264   5d0da3dc9764   "/bin/bash"              5 months ago         Exited (0) 5 months ago                epic_ishizaka
+```
+
+Есть известная проблемы с выходом контейнера сразу после старта. Решаю проблему.
+
 ## Задача 2
 
 В БД из задачи 1: 
