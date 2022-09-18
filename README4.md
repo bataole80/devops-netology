@@ -36,6 +36,10 @@
 
 Если всё отработало в рамках ожидания - выгрузить схемы workflow для импорта в XML. Файлы с workflow приложить к решению задания.
 
+```buildoutcfg
+https://github.com/bataole80/devops-netology/blob/main/Bug%20flow.xml
+https://github.com/bataole80/devops-netology/blob/main/Other.xml
+```
 
 ---
 
