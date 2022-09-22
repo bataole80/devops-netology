@@ -23,6 +23,17 @@
 Файл создан
 
 2. При помощи `ansible-galaxy` скачать себе эту роль. Запустите  `molecule test`, посмотрите на вывод команды.
+
+Есть проблема с установкой java. Буду переделывать под установку open-jdk местно. 
+```
+vagrant@server1:~/playbook_new$ ansible-galaxy install -r requirements.yml --roles-path ./
+Starting galaxy role install process
+[WARNING]: - java was NOT installed successfully: - command /usr/bin/git clone git@github.com:netology-code/mnt-homeworks-ansible.git java failed in directory /home/vagrant/.ansible/tmp/ansible-
+local-2056t2_g5ism/tmpudjkr_pr (rc=128) - Cloning into 'java'... ssh: connect to host github.com port 22: Network is unreachable  fatal: Could not read from remote repository.  Please make sure you have the
+correct access rights and the repository exists.
+ERROR! - you can use --ignore-errors to skip failed roles and finish processing the list.
+```
+
 3. Перейдите в каталог с ролью elastic-role и создайте сценарий тестирования по умолчаню при помощи `molecule init scenario --driver-name docker`.
 4. Добавьте несколько разных дистрибутивов (centos:8, ubuntu:latest) для инстансов и протестируйте роль, исправьте найденные ошибки, если они есть.
 5. Создайте новый каталог с ролью при помощи `molecule init role --driver-name docker kibana-role`. Можете использовать другой драйвер, который более удобен вам.
