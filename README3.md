@@ -24,15 +24,11 @@
 
 2. При помощи `ansible-galaxy` скачать себе эту роль. Запустите  `molecule test`, посмотрите на вывод команды.
 
-Есть проблема с установкой java. Буду переделывать под установку open-jdk местно. 
 ```
-vagrant@server1:~/playbook_new$ ansible-galaxy install -r requirements.yml --roles-path ./
-Starting galaxy role install process
-[WARNING]: - java was NOT installed successfully: - command /usr/bin/git clone git@github.com:netology-code/mnt-homeworks-ansible.git java failed in directory /home/vagrant/.ansible/tmp/ansible-
-local-2056t2_g5ism/tmpudjkr_pr (rc=128) - Cloning into 'java'... ssh: connect to host github.com port 22: Network is unreachable  fatal: Could not read from remote repository.  Please make sure you have the
-correct access rights and the repository exists.
-ERROR! - you can use --ignore-errors to skip failed roles and finish processing the list.
+Я переделал установку на openjdk
 ```
+
+
 
 3. Перейдите в каталог с ролью elastic-role и создайте сценарий тестирования по умолчаню при помощи `molecule init scenario --driver-name docker`.
 4. Добавьте несколько разных дистрибутивов (centos:8, ubuntu:latest) для инстансов и протестируйте роль, исправьте найденные ошибки, если они есть.
@@ -43,6 +39,13 @@ ERROR! - you can use --ignore-errors to skip failed roles and finish processing 
 9. Переработайте playbook на использование roles.
 10. Выложите playbook в репозиторий.
 11. В ответ приведите ссылки на оба репозитория с roles и одну ссылку на репозиторий с playbook.
+
+```buildoutcfg
+Я переделал плейбук на использование ролей. Плейбук и роли будут в одном репозитории. 
+Плейбук и роли протестированы, работают.
+
+
+```
 
 ## Необязательная часть
 

@@ -1,0 +1,4 @@
+---
+# defaults file for roles/elastic-role
+elastic_version: "7.10.1"
+elastic_home: "/opt/elastic/{{ elastic_version }}"

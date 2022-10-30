@@ -1,0 +1,5 @@
+---
+# defaults file for roles/java-role
+java_jdk_version: 18.0.2.1_linux-x64_bin
+java_oracle_jdk_package: openjdk-18.0.2.1_linux-x64_bin.tar.gz
+java_home: "/opt/jdk/{{ java_jdk_version }}"

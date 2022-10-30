@@ -1,0 +1,13 @@
+---
+  - src: git@github.com:bataole80/java-role.git
+    scm: git
+    version: "1.0.1"
+    name: java-role 
+  - src: git@github.com:bataole80/elastic-role.git
+    scm: git
+    version: "1.0.1"
+    name: elastic-role
+  - src: git@github.com:bataole80/kibana-role.git
+    scm: git
+    version: "1.0.1"
+    name: kibana-role
